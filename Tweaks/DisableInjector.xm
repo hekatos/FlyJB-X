@@ -43,12 +43,6 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 	}
 
 	if([prefs[@"enabled"] boolValue]) {
-		NSString *myUDID = (__bridge NSString*)MGCopyAnswer(kMGUniqueDeviceID, nil);
-		if([prefs[bundleID] boolValue] && ![myUDID isEqualToString:@"411fb57ddf00ef406651e1d6da52c04e6c2ea7f3"] && ![myUDID isEqualToString:@"156090e94ec518945ab5e81d019554dae0fcccba"]) {
-			CPDistributedMessagingCenter *center = [CPDistributedMessagingCenter centerNamed:@"kr.xsf1re.flyjbcenter"];
-			[center sendMessageAndReceiveReplyName:@"getAlert" userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unregistered", @"message", bundleID, @"bundleID", nil]];
-			//BKSTerminateApplicationForReasonAndReportWithDescription(bundleID, 5, false, NULL);
-		}
 		//NSLog(@"[test] FBProcessManager _createProcessWithExecutionContext, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue]) {
 			//NSLog(@"[test] FBProcessManager disabler ENABLED");
@@ -79,12 +73,6 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 	}
 
 	if([prefs[@"enabled"] boolValue]) {
-		NSString *myUDID = (__bridge NSString*)MGCopyAnswer(kMGUniqueDeviceID, nil);
-		if([prefs[bundleID] boolValue] && ![myUDID isEqualToString:@"411fb57ddf00ef406651e1d6da52c04e6c2ea7f3"] && ![myUDID isEqualToString:@"156090e94ec518945ab5e81d019554dae0fcccba"]) {
-			CPDistributedMessagingCenter *center = [CPDistributedMessagingCenter centerNamed:@"kr.xsf1re.flyjbcenter"];
-			[center sendMessageAndReceiveReplyName:@"getAlert" userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unregistered", @"message", bundleID, @"bundleID", nil]];
-			//BKSTerminateApplicationForReasonAndReportWithDescription(bundleID, 5, false, NULL);
-		}
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue]) {
 			//NSLog(@"[test] FBProcessManager disabler ENABLED");

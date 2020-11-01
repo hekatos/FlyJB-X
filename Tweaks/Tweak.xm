@@ -59,37 +59,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 %end
 %end
 
-%group SpringBoardGetAlert
-%hook SBHomeScreenViewController
--(void)loadView {
-	%orig;
-	CPDistributedMessagingCenter *center = [CPDistributedMessagingCenter centerNamed:@"kr.xsf1re.flyjbcenter"];
-	[center runServerOnCurrentThread];
-	[center registerForMessageName:@"getAlert" target:self selector:@selector(alert:message:)];
-}
-
-%new
-- (NSDictionary *)alert: (NSString *)name message: (NSDictionary *)userInfo {
-	if([[userInfo objectForKey:@"message"] isEqualToString:@"Unregistered"]) {
-		//BKSTerminateApplicationForReasonAndReportWithDescription([userInfo objectForKey:@"bundleID"], 5, false, NULL);
-		UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"공중제비" message:@"현재 우회 기능이 작동하지 않습니다.\n개발자에게 문의하세요." preferredStyle: UIAlertControllerStyleAlert];
-		[alert addAction:[UIAlertAction actionWithTitle:@"확인" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-		                          [alert dismissViewControllerAnimated:YES completion:nil];
-				  }]];
-
-		[self presentViewController:alert animated:true completion:nil];
-		sleep(1);
-		NSString *executablePath = [[LSApplicationProxy applicationProxyForIdentifier:[userInfo objectForKey:@"bundleID"]] bundleExecutable];
-		pid_t pid;
-		const char* args[] = {"killall", [executablePath UTF8String], NULL};
-		posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
-		//BKSTerminateApplicationForReasonAndReportWithDescription([userInfo objectForKey:@"bundleID"], 5, false, NULL);
-	}
-	return nil;
-}
-%end
-%end
-
 %ctor{
 
 	NSLog(@"[FlyJB] Loaded!!!");
@@ -116,7 +85,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 		return;
 	}
 
-	%init(SpringBoardGetAlert);
 	loadDisableInjector();
 
 	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
