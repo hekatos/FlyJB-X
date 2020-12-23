@@ -1,16 +1,16 @@
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "../Headers/MemHooks.h"
 #import "../Headers/AeonLucid.h"
-#import "../Cryptor/NSString+AESCrypt.h"
 #import "../Headers/dobby.h"
 #import "../Headers/FJPattern.h"
 #include <sys/syscall.h>
 #include <dlfcn.h>
 
 @implementation MemHooks
-- (NSDictionary *)getDecryptedFJMemory {
+- (NSDictionary *)getFJMemory {
 	NSData *FJMemory = [NSData dataWithContentsOfFile:@"/var/mobile/Library/Preferences/FJMemory" options:0 error:nil];
-	NSData *FJMemory_dec = [FJMemory AES256DecryptWithKey:@"이 편지는 영국에서 최초로 시작돼 일 년에 지구 한 바퀴를 돌면서 받는 사람에게 행운을 가져다주었습니다. 지금 당신에게 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함하여 7통의 편지를 행운이 필요한 사람에게 보내 주어야 합니다. 복사를 해도 좋습니다. 영국에서 ‘HGXWCH’라는 사람은 1930년 이 편지를 받았습니다. 그는 비서에게 복사해서 보내라고 했습니다. 며칠 뒤 그는 복권이 당첨되어 20억원을 받았습니다. 어떤 이는 이 편지를 받았으나 96시간 이내 자신의 손에서 떠나야 한다는 사실을 잊었습니다. 그는 곧 사직되었습니다. 나중에야 이 사실을 알고 7통의 편지를 보낸 후 다시 좋은 직장을 얻었습니다. 이 편지를 보내면 7년간 행운이 있을 것이고 그렇지 않으면 3년간 불행이 있을 것입니다."];
-	NSDictionary *DecryptedFJMemory = [NSJSONSerialization JSONObjectWithData:FJMemory_dec options:0 error:nil];
+	NSDictionary *DecryptedFJMemory = [NSJSONSerialization JSONObjectWithData:FJMemory options:0 error:nil];
 	return DecryptedFJMemory;
 }
 @end
@@ -19,6 +19,11 @@ uint8_t RET[] = {
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
 
+uint8_t B8[] = {
+	0x02, 0x00, 0x00, 0x14  //B #0x8
+};
+
+
 void (*orig_subroutine)(void);
 void nothing(void)
 {
@@ -26,38 +31,44 @@ void nothing(void)
 }
 
 void startHookTarget_lxShield(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	hook_memory(match - 0x1C, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	hook_memory(match, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab2(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	hook_memory(match - 0x10, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab3(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	hook_memory(match - 0x8, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab4(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	hook_memory(match - 0x10, RET, sizeof(RET));
+#endif
+}
+
+void startHookTarget_AppSolid(uint8_t* match) {
+#if defined __arm64__ && not defined __arm64e__
+	hook_memory(match, B8, sizeof(B8));
 #endif
 }
 
 // ====== PATCH CODE ====== //
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
 
 	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
@@ -79,7 +90,7 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 }
 
 void startHookTarget_SVC80(uint8_t* match) {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80_handler);
 	dobby_disable_near_branch_trampoline();
@@ -87,7 +98,7 @@ void startHookTarget_SVC80(uint8_t* match) {
 }
 
 void loadSVC80MemHooks() {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	const uint8_t target[] = {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
@@ -97,10 +108,10 @@ void loadSVC80MemHooks() {
 
 // ====== PATCH FROM FJMemory ====== //
 void loadFJMemoryHooks() {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-	NSDictionary *dict = [[[MemHooks alloc] init] getDecryptedFJMemory];
+	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
 	NSInteger dictAddrCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"addr"] count];
 	if(dictAddrCount) {
 		for(int i=0; i < dictAddrCount; i++)
@@ -118,11 +129,11 @@ void loadFJMemoryHooks() {
 %group FJMemoryIntegrityRecoverHMS
 %hook NSFileManager
 - (BOOL)fileExistsAtPath: (NSString *)path {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	if([path hasSuffix:@"/com.vungle/userInfo"]) {
 		NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 		NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-		NSDictionary *dict = [[[MemHooks alloc] init] getDecryptedFJMemory];
+		NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
 		NSInteger dictInstrOrigCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"instr_orig"] count];
 		if(dictInstrOrigCount) {
 			for(int i=0; i < dictInstrOrigCount; i++)
@@ -143,10 +154,10 @@ void loadFJMemoryHooks() {
 %group FJMemoryIntegrityRecoverLMP
 %hook XASAskJobs
 +(int)updateCheck {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-	NSDictionary *dict = [[[MemHooks alloc] init] getDecryptedFJMemory];
+	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
 	NSInteger dictInstrOrigCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"instr_orig"] count];
 	if(dictInstrOrigCount) {
 		for(int i=0; i < dictInstrOrigCount; i++)
@@ -176,7 +187,7 @@ void loadFJMemoryIntegrityRecover() {
 void loadFJMemorySymbolHooks() {
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-	NSDictionary *dict = [[[MemHooks alloc] init] getDecryptedFJMemory];
+	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
 	NSInteger SymbolCount = [[[[dict valueForKeyPath:bundleID] objectForKey:appVersion] objectForKeyedSubscript:@"symbol"] count];
 	for(int i=0; i < SymbolCount; i++)
 	{
@@ -187,7 +198,7 @@ void loadFJMemorySymbolHooks() {
 }
 
 void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-	#if defined __arm64__ || defined __arm64e__
+	#if defined __arm64__ && not defined __arm64e__
 	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
@@ -206,7 +217,7 @@ void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 }
 
 void loadOpendirMemHooks() {
-#if defined __arm64__ || defined __arm64e__
+#if defined __arm64__ && not defined __arm64e__
 	//dobby_enable_near_branch_trampoline();
 	DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "opendir"), (DBICallTy)opendir_handler);
 	//dobby_disable_near_branch_trampoline();

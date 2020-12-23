@@ -217,6 +217,17 @@ void loadlxShieldMemHooks() {
 #endif
 }
 
+void loadlxShieldMemHooks2() {
+#if defined __arm64__ || defined __arm64e__
+	const uint8_t target[] = {
+		0xFD, 0x83, 0x01, 0x91,
+		0xFF, 0x43, 0x13, 0xD1,
+		0xA8, 0x43, 0x08, 0xD1
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
+#endif
+}
+
 void loadAhnLabMemHooks() {
 #if defined __arm64__ || defined __arm64e__
 	const uint8_t target[] = {
@@ -247,5 +258,16 @@ void loadAhnLabMemHooks() {
 		0x1F, 0x20, 0x03, 0xD5
 	};
 	scan_executable_memory(target4, sizeof(target4), &startHookTarget_AhnLab4);
+#endif
+}
+
+void loadAppSolidMemHooks() {
+#if defined __arm64__ || defined __arm64e__
+	const uint8_t target[] = {
+		0x4E, 0x00, 0x00, 0x37,
+		0x05, 0x00, 0x00, 0x14,
+		0x28, 0x00, 0x80, 0x52
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_AppSolid);
 #endif
 }

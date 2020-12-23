@@ -3,11 +3,13 @@
 
 %group LibraryHooks
 //NHN Payco (페이코)
+/*
 %hook Diresu
 +(int)s: (id)arg1: (id)arg2: (id)arg3: (id)arg4 {
 	return 0;
 }
 %end
+*/
 
 //AppGuardToast 뱅뱅뱅 상상인디지털뱅크
 %hook AGFramework

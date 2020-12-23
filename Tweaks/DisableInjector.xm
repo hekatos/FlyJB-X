@@ -1,8 +1,7 @@
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "../Headers/DisableInjector.h"
 #include <sys/syscall.h>
-#import <MobileGestalt/MobileGestalt.h>
-#import <AppSupport/CPDistributedMessagingCenter.h>
-extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSString *bundleID, int reasonID, bool report, NSString *description);
 
 @interface RBSProcessIdentity : NSObject
 @property(readonly, copy, nonatomic) NSString *embeddedApplicationIdentifier;

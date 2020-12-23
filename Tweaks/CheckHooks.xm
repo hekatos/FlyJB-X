@@ -1,3 +1,6 @@
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#include <string.h>
 #import "../Headers/CheckHooks.h"
 
 @interface StockNewsdmManager : NSObject

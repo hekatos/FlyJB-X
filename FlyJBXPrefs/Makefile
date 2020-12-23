@@ -1,12 +1,12 @@
+GO_EASY_ON_ME = 1
 
-
-ARCHS := armv7 armv7s arm64 arm64e
-TARGET := iphone:clang:14.0:7.0
+ARCHS := arm64 arm64e
+TARGET := iphone:clang:12.2:7.1
 
 include $(THEOS)/makefiles/common.mk
 
 BUNDLE_NAME = FlyJBXPrefs
-$(BUNDLE_NAME)_FILES = ../Cryptor/NSString+AESCrypt.m ../Cryptor/NSData+AESCrypt.m FJRootListController.m FJAppListController.m FJCr4shF1xListController.m FJDisablerListController.m
+$(BUNDLE_NAME)_FILES = FJRootListController.m FJAppListController.m FJCr4shF1xListController.m FJDisablerListController.m
 $(BUNDLE_NAME)_INSTALL_PATH = /Library/PreferenceBundles
 $(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences

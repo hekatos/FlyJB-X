@@ -82,6 +82,8 @@ v%@ © FlyJB X %@</string>
 	<string>피드백 보내기</string>
 	<key>FlyJB_SHOWPATCHDATA</key>
 	<string>패치 내용 보기</string>
+    <key>FlyJB_SHOWSOURCECODE</key>
+    <string>소스 코드 보기</string>
 	<key>FlyJB_SYSTEMAPPS</key>
 	<string>시스템 앱</string>
 	<key>FlyJB_THANKS4TEST</key>

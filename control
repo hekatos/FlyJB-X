@@ -1,8 +1,8 @@
 Package: kr.xsf1re.flyjbx
 Name: FlyJB X
+Version: 1.0.0
 Depends: mobilesubstrate, applist (>= 1.5.15~beta1), preferenceloader
 Conflicts: kr.xsf1re.flyjb
-Version: 1.0.0
 Architecture: iphoneos-arm
 Description: You can HIDE Doing jailbreak your iDevice.
 Maintainer: XsF1re

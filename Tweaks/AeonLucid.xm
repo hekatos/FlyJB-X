@@ -3,6 +3,7 @@
 #import <mach/mach.h>
 #import <dlfcn.h>
 #import <substrate.h>
+#import <Foundation/Foundation.h>
 #import "../Headers/AeonLucid.h"
 
 void scan_executable_memory(const uint8_t *target, const uint32_t target_len, void (*callback)(uint8_t *)) {

@@ -1,5 +1,6 @@
 #import "../Headers/NoSafeMode.h"
 #include <signal.h>
+#include <string.h>
 
 void sig_handler(int num, siginfo_t *info, void *ctx){
     return;

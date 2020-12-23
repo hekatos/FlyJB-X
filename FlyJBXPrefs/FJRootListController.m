@@ -3,7 +3,6 @@
 #include "FJAppListController.h"
 #include "FJCr4shF1xListController.h"
 #include "FJDisablerListController.h"
-#import "../Cryptor/NSString+AESCrypt.h"
 
 #define RESET_PREFS 100
 #define INSTALL_TWITTER 101
@@ -20,7 +19,6 @@ static NSString *vers = @"1.0.0";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
-static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 일 년에 지구 한 바퀴를 돌면서 받는 사람에게 행운을 가져다주었습니다. 지금 당신에게 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함하여 7통의 편지를 행운이 필요한 사람에게 보내 주어야 합니다. 복사를 해도 좋습니다. 영국에서 ‘HGXWCH’라는 사람은 1930년 이 편지를 받았습니다. 그는 비서에게 복사해서 보내라고 했습니다. 며칠 뒤 그는 복권이 당첨되어 20억원을 받았습니다. 어떤 이는 이 편지를 받았으나 96시간 이내 자신의 손에서 떠나야 한다는 사실을 잊었습니다. 그는 곧 사직되었습니다. 나중에야 이 사실을 알고 7통의 편지를 보낸 후 다시 좋은 직장을 얻었습니다. 이 편지를 보내면 7년간 행운이 있을 것이고 그렇지 않으면 3년간 불행이 있을 것입니다.";
 
 @implementation FJRootListController
 - (instancetype)init {
@@ -84,8 +82,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 			if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
 			        NSString *FJDataPath = @"/var/mobile/Library/Preferences/FJMemory";
 			        NSData *FJMemory = [NSData dataWithContentsOfFile:FJDataPath options:0 error:nil];
-			        NSData *FJMemory_dec = [FJMemory AES256DecryptWithKey:easterkey];
-			        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory_dec options:0 error:nil];
+			        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory options:0 error:nil];
 			        NSString *version = [dict objectForKeyedSubscript:@"version"];
 			        [specifier.properties setValue:@"0" forKey:@"footerAlignment"];
 			        [specifier.properties setValue:[NSString stringWithFormat:LOCALIZED(@"FlyJB_UPDATE_LASTDATE"), version] forKey:@"footerText"];
@@ -98,7 +95,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 			[specifier.properties setValue:@"enabled" forKey:@"displayIdentifier"];
 			specifier;
 		})];
-		
+
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
 			[specifiers addObject:({
 				PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_UPDATE_MEMORY") target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
@@ -146,6 +143,13 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 				specifier->action = @selector(openWebsite:);
 				specifier;
 			})];
+
+            [specifiers addObject:({
+                PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_SHOWSOURCECODE") target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+                [specifier setIdentifier:@"ShowSourceCode"];
+                specifier->action = @selector(openWebsite:);
+                specifier;
+            })];
 		}
 #endif
 
@@ -157,15 +161,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ETCOPTIONS") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 			specifier;
 		})];
-/*
-                if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"11.0")) {
-                        [specifiers addObject:({
-                                PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_BAR_ENABLE") target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
-                                [specifier.properties setValue:@"FlyJBBarEnable" forKey:@"displayIdentifier"];
-                                specifier;
-                        })];
-                }
- */
+
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_RESETPREFS") target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
 			specifier->action = @selector(resetPrefs:);
@@ -264,7 +260,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 	[alert.view addSubview:activity];
 	[self presentViewController:alert animated:YES completion:nil];
 
-	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://alias20.dothome.co.kr/785105baa28788d50fad17db79721e5374d7a16c298016c5c8604dc1d71056cca2c1e59de70953b7335570dee95711193d68510a62961b7c477ffd12e1ed8231/last_roleset.php"]];
+	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://xsf1re.dothome.co.kr/flyjb/last_roleset.php"]];
 	NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
 	NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
 	                                      NSString *returnData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -287,8 +283,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 	                                               if (error == nil && statusCode == 200) {
 	                                                       NSString *FJDataPath = @"/var/mobile/Library/Preferences/FJMemory";
 	                                                       NSData *FJMemory = [NSData dataWithContentsOfFile:FJDataPath options:0 error:nil];
-	                                                       NSData *FJMemory_dec = [FJMemory AES256DecryptWithKey:easterkey];
-	                                                       NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory_dec options:0 error:nil];
+	                                                       NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory options:0 error:nil];
 	                                                       NSString *version = [dict objectForKeyedSubscript:@"version"];
 
 	                                                       NSData *returnData_nsd = [returnData dataUsingEncoding:NSUTF8StringEncoding];
@@ -296,7 +291,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 	                                                       NSString *version_web = [dict_web objectForKey:@"version"];
 	                                                       NSString *supportedVersion_web = [dict_web objectForKey:@"supportedVersion"];
 
-	                                                       NSString *supportedVersion = @"20200703";
+	                                                       NSString *supportedVersion = @"20201223";
 	                                                       if(![supportedVersion_web isEqualToString:supportedVersion])  {
 	                                                               UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZED(@"FlyJB_UPDATE_FAILED")
 	                                                                                           message:@"현재 버전은 메모리 패치 업데이트 기능을 지원하지 않습니다.\n공중제비 트윅을 최신 버전으로 업데이트해주세요."
@@ -325,7 +320,7 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 							       }
 
 	                                                       else if(![returnData isEqualToString:version]) {
-	                                                               NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://alias20.dothome.co.kr/785105baa28788d50fad17db79721e5374d7a16c298016c5c8604dc1d71056cca2c1e59de70953b7335570dee95711193d68510a62961b7c477ffd12e1ed8231/%@.php", version_web]]];
+	                                                               NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://xsf1re.dothome.co.kr/flyjb/%@.php", version_web]]];
 	                                                               NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
 	                                                                                                     NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
 	                                                                                                     if (error || statusCode != 200) {
@@ -343,10 +338,6 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 													     }
 
 	                                                                                                     if (error == nil && statusCode == 200) {
-	                                                                                                             //NSError *error = nil;
-	                                                                                                             //NSString *returnData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	                                                                                                             //NSData *nsdataFromBase64String = [[NSData alloc]initWithBase64EncodedString:returnData_prev options:0];
-	                                                                                                             //NSString *returnData = [[NSString alloc] initWithData:nsdataFromBase64String encoding:NSUTF8StringEncoding];
 	                                                                                                             [data writeToFile:FJDataPath atomically:YES];
 	                                                                                                             UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZED(@"FlyJB_UPDATE_SUCCESS")
 	                                                                                                                                         message:LOCALIZED(@"FlyJB_UPDATE_SUCCESS_DATA")
@@ -469,8 +460,11 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 	NSString *value = specifier.identifier;
 	NSString *url = nil;
 	if([value isEqualToString:@"ShowPatchData"]) {
-		url = @"https://repo.xsf1re.kr/flyjb/private/update.txt";
+		url = @"https://xsf1re.dothome.co.kr/flyjb/update.txt";
 	}
+    if([value isEqualToString:@"ShowSourceCode"]) {
+        url = @"https://github.com/XsF1re/FlyJB-X";
+    }
 	if([value isEqualToString:@"XsF1re"]) {
 		url = @"https://twitter.com/XsF1re";
 	}
@@ -507,21 +501,6 @@ static NSString *easterkey = @"이 편지는 영국에서 최초로 시작돼 �
 
 	                             [self resetPreferences];
 
-	                             /*
-	                                HBPreferences *prefs = [[HBPreferences alloc] initWithIdentifier:@"kr.xsf1re.flyjb"];
-	                                HBPreferences *prefs_crashfix = [[HBPreferences alloc] initWithIdentifier:@"kr.xsf1re.flyjb_crashfix"];
-	                                [prefs removeAllObjects];
-	                                [prefs_crashfix removeAllObjects];
-
-
-	                                [self.enableSwitch setOn:NO animated: YES];
-
-	                                UIAlertController *alert_respring = [UIAlertController
-	                                                 alertControllerWithTitle:LOCALIZED(@"FlyJB_RESPRINGSOON")
-	                                                 message:LOCALIZED(@"FlyJB_THANKS4TEST")
-	                                                 preferredStyle:UIAlertControllerStyleAlert];
-	                                [self presentViewController:alert_respring animated:YES completion:nil];
-	                                [self performSelector:@selector(respring:) withObject:nil afterDelay:3.0]; */
 			     }
 	                    ];
 

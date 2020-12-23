@@ -7,11 +7,13 @@ void loadFJMemorySymbolHooks();
 void loadSVC80MemHooks();
 void loadOpendirMemHooks();
 void startHookTarget_lxShield(uint8_t* match);
+void startHookTarget_lxShield2(uint8_t* match);
 void startHookTarget_AhnLab(uint8_t* match);
 void startHookTarget_AhnLab2(uint8_t* match);
 void startHookTarget_AhnLab3(uint8_t* match);
 void startHookTarget_AhnLab4(uint8_t* match);
+void startHookTarget_AppSolid(uint8_t* match);
 
 @interface MemHooks: NSObject
-- (NSDictionary *)getDecryptedFJMemory;
+- (NSDictionary *)getFJMemory;
 @end

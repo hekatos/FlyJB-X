@@ -1,4 +1,6 @@
 #import <substrate.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "../Headers/FJPattern.h"
 #import "../Headers/LibraryHooks.h"
 #import "../Headers/ObjCHooks.h"
@@ -102,16 +104,19 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 
 			loadFJMemoryHooks();
 
+//Arxan 메모리 패치
 			if([bundleID isEqualToString:@"com.hana.hanamembers"] || [bundleID isEqualToString:@"com.lottecard.mobilepay"])
 				loadFJMemoryIntegrityRecover();
 
+//Arxan 심볼 패치
 			if([bundleID isEqualToString:@"com.kakaobank.channel"]) {
 				//loadFJMemorySymbolHooks();
 				//kakaoBankPatch();
 				NSLog(@"[FlyJB] kakaoBankPatch: %d", kakaoBankPatch());
 			}
-//AhnLab Mobile Security - NH올원페이, 하나카드
-			if([bundleID isEqualToString:@"com.nonghyup.card.NHAllonePay"] || [bundleID isEqualToString:@"com.hanaskcard.mobileportal"])
+//AhnLab Mobile Security - NH올원페이, 하나카드, NH스마트뱅킹, NH농협카드, 하나카드 원큐페이(앱카드), NH스마트알림, NH올원뱅크
+			if([bundleID isEqualToString:@"com.nonghyup.card.NHAllonePay"] || [bundleID isEqualToString:@"com.hanaskcard.mobileportal"] || [bundleID isEqualToString:@"com.nonghyup.newsmartbanking"]
+				 || [bundleID isEqualToString:@"com.nonghyup.nhcard"] || [bundleID isEqualToString:@"com.hanaskcard.paycli"] || [bundleID isEqualToString:@"com.nonghyup.nhsmartpush"] || [bundleID isEqualToString:@"com.nonghyup.allonebank"])
 				loadAhnLabMemHooks();
 
 //락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원
@@ -125,14 +130,19 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			if((stealienExist || stealienExist2) && ![bundleID isEqualToString:@"com.vivarepublica.cash"])
 				loadStealienObjCHooks();
 
-//스틸리언2 - 케이뱅크, 보험파트너, 토스, 사이다뱅크(SBI저축은행), 티머니페이, 티머니 비즈페이
+//스틸리언2 - 케이뱅크, 보험파트너, 토스, 사이다뱅크(SBI저축은행), 티머니페이, 티머니 비즈페이, 애큐온저축은행
 			if([bundleID isEqualToString:@"com.kbankwith.smartbank"] || [bundleID isEqualToString:@"im.toss.app.insurp"] || [bundleID isEqualToString:@"com.vivarepublica.cash"]
-			   || [bundleID isEqualToString:@"com.sbi.saidabank"] || [bundleID isEqualToString:@"com.tmoney.tmpay"] || [bundleID isEqualToString:@"com.kscc.t-gift"])
+			   || [bundleID isEqualToString:@"com.sbi.saidabank"] || [bundleID isEqualToString:@"com.tmoney.tmpay"] || [bundleID isEqualToString:@"com.kscc.t-gift"]
+			 	 || [bundleID isEqualToString:@"com.kismobile.pay"] || [bundleID isEqualToString:@"co.kr.acuonsavingsbank.acuonsb"])
 				loadSysHooks4();
 
 //배달요기요앱은 한번 탈옥감지하면 설정파일에 colorChecker key에 TRUE 값이 기록됨.
 			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
 				loadYogiyoObjcHooks();
+
+//AppSolid - 코레일톡
+			if([bundleID isEqualToString:@"com.korail.KorailTalk"])
+				loadAppSolidMemHooks();
 
 //따로 제작? 불명 - KB손해보험; AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드)
 			if([bundleID isEqualToString:@"com.kbinsure.kbinsureapp"] || [bundleID isEqualToString:@"com.epost.psf.sd"]  || [bundleID isEqualToString:@"org.kftc.fido.lnk.lnkApp"]
@@ -151,26 +161,29 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			if([bundleID isEqualToString:@"com.tmoney.tmpay"] || [bundleID isEqualToString:@"com.kscc.t-gift"])
 				loadSVC80MemHooks();
 
-//NSHC lxShield - 가디언테일즈, 현대카드
-			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"] || [bundleID isEqualToString:@"com.hyundaicard.hcappcard"])
+//NSHC lxShield - 가디언테일즈
+			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"])
 				loadlxShieldMemHooks();
+
+//NSHC lxShield v2 - 현대카드
+			if([bundleID isEqualToString:@"com.hyundaicard.hcappcard"])
+				loadlxShieldMemHooks2();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구
 			if([bundleID isEqualToString:@"com.bizplay.zeropay"] || [bundleID isEqualToString:@"com.hanabank.smart.HanaNBank"] || [bundleID isEqualToString:@"com.kebhana.hanapush"]
 			   || [bundleID isEqualToString:@"com.miraeasset.mobilewindow"])
 				loadSVC80MemHooks();
 
-//Arxan - 스마일페이, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 삼성카드 마이홈, 하나금융투자 1Q MTS, 하나금융투자 파생, 하나금융투자 프로, 하나원큐 주식 - 하나금융투자
+//Arxan - 스마일페이, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 삼성카드 마이홈, 하나금융투자 1Q MTS, 하나금융투자 파생, 하나금융투자 프로, 하나원큐 주식 - 하나금융투자, 페이코
 			if([bundleID isEqualToString:@"com.mysmilepay.app"] || [bundleID isEqualToString:@"com.gsretail.ios.thepop"] || [bundleID isEqualToString:@"com.gsretail.gscvs"]
 			   || [bundleID isEqualToString:@"com.gsretail.supermarket"] || [bundleID isEqualToString:@"com.bccard.iphoneapp"] || [bundleID isEqualToString:@"com.samsungCard.samsungCard"]
 			   || [bundleID isEqualToString:@"com.app.shd.pstock"] || [bundleID isEqualToString:@"com.hanasec.world"] || [bundleID isEqualToString:@"com.hanasec.stock"]
-			   || [bundleID isEqualToString:@"com.app.shd.spstock"]) {
+			   || [bundleID isEqualToString:@"com.app.shd.spstock"] || [bundleID isEqualToString:@"com.nhnent.TOASTPAY"]) {
 				//loadSysHooks4();
 				loadSVC80MemHooks();
 			}
 
 //하나카드, NEW하나은행은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
-
 			if(![bundleID isEqualToString:@"com.hanaskcard.mobileportal"] && ![bundleID isEqualToString:@"com.kebhana.hanapush"]) {
 				loadSysHooks2();
 				if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
@@ -189,7 +202,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 //토스 탈옥감지 확인
 			if([bundleID isEqualToString:@"com.vivarepublica.cash"])
 				loadCheckHooks();
-
 
 		}
 	}

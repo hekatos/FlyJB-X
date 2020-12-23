@@ -15,6 +15,17 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef enum {
+  kMemoryOperationSuccess,
+  kMemoryOperationError,
+  kNotSupportAllocateExecutableMemory,
+  kNotEnough,
+  kNone
+} MemoryOperationError;
+
+#define PLATFORM_INTERFACE_CODE_PATCH_TOOL_H
+MemoryOperationError CodePatch(void *address, uint8_t *buffer, uint32_t buffer_size);
+
 typedef uintptr_t addr_t;
 typedef uint32_t  addr32_t;
 typedef uint64_t  addr64_t;
@@ -85,13 +96,18 @@ typedef struct _RegisterContext {
 } RegisterContext;
 #elif defined(_M_IX86) || defined(__i386__)
 typedef struct _RegisterContext {
+  uint32_t dummy_0;
+  uint32_t esp;
+
+  uint32_t dummy_1;
+  uint32_t flags;
+
   union {
     struct {
       uint32_t eax, ebx, ecx, edx, ebp, esp, edi, esi;
     } regs;
   } general;
 
-  uint32_t flags;
 } RegisterContext;
 #elif defined(_M_X64) || defined(__x86_64__)
 typedef struct _RegisterContext {
@@ -155,16 +171,12 @@ int DobbyDestroy(void *address);
 // iterate symbol table and find symbol
 void *DobbySymbolResolver(const char *image_name, const char *symbol_name);
 
-// near branch plugin
 // [!!! READ ME !!!]
 // for arm, Arm64, dobby will use b xxx instead of ldr absolute indirect branch
 // for x64, dobby always use absolute indirect jump
 #if defined(__arm__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_X64) || defined(__x86_64__)
-
 void dobby_enable_near_branch_trampoline();
-
 void dobby_disable_near_branch_trampoline();
-
 #endif
 
 // register linker load image callback
