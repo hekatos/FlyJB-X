@@ -8,6 +8,8 @@
 	<string>FlyJB Activation</string>
 	<key>FlyJB_ENABLE</key>
 	<string>Enable</string>
+    <key>FlyJB_ENABLE_DOBBY</key>
+    <string>Enable DobbyHook</string>
 	<key>FlyJB_UPDATE_MEMORY</key>
 	<string>Update Memory Patch</string>
 	<key>FlyJB_UPDATE_CHECK</key>
@@ -72,6 +74,8 @@ Use only if your app crashes with Substitute or Cydia Substrate.</string>
 	<string>Credit</string>
 	<key>FlyJB_DEVELOPER</key>
 	<string>@XsF1re (Developer)</string>
+    <key>DobbyHook_DEVELOPER</key>
+    <string>@jmpews (Developer)</string>
 	<key>FlyJB_DESIGNER</key>
 	<string>emulzone (Designer)</string>
 	<key>FlyJB_TRANSLATOR_AR</key>

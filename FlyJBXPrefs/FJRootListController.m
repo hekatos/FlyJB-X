@@ -79,14 +79,8 @@ static const NSBundle *tweakBundle;
 
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ACTIVATION") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
-			if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
-			        NSString *FJDataPath = @"/var/mobile/Library/Preferences/FJMemory";
-			        NSData *FJMemory = [NSData dataWithContentsOfFile:FJDataPath options:0 error:nil];
-			        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory options:0 error:nil];
-			        NSString *version = [dict objectForKeyedSubscript:@"version"];
-			        [specifier.properties setValue:@"0" forKey:@"footerAlignment"];
-			        [specifier.properties setValue:[NSString stringWithFormat:LOCALIZED(@"FlyJB_UPDATE_LASTDATE"), version] forKey:@"footerText"];
-			}
+			[specifier.properties setValue:@"0" forKey:@"footerAlignment"];
+			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있습니다." forKey:@"footerText"];
 			specifier;
 		})];
 
@@ -95,6 +89,27 @@ static const NSBundle *tweakBundle;
 			[specifier.properties setValue:@"enabled" forKey:@"displayIdentifier"];
 			specifier;
 		})];
+
+		[specifiers addObject:({
+			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ENABLE_DOBBY") target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
+			[specifier.properties setValue:@"enableDobby" forKey:@"displayIdentifier"];
+			specifier;
+		})];
+
+		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
+			[specifiers addObject:({
+				PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"업데이트" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
+				if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
+				        NSString *FJDataPath = @"/var/mobile/Library/Preferences/FJMemory";
+				        NSData *FJMemory = [NSData dataWithContentsOfFile:FJDataPath options:0 error:nil];
+				        NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:FJMemory options:0 error:nil];
+				        NSString *version = [dict objectForKeyedSubscript:@"version"];
+				        [specifier.properties setValue:@"0" forKey:@"footerAlignment"];
+				        [specifier.properties setValue:[NSString stringWithFormat:LOCALIZED(@"FlyJB_UPDATE_LASTDATE"), version] forKey:@"footerText"];
+				}
+				specifier;
+			})];
+		}
 
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0") && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Library/Preferences/FJMemory"]) {
 			[specifiers addObject:({
@@ -199,6 +214,15 @@ static const NSBundle *tweakBundle;
 		})];
 
 		[specifiers addObject:({
+			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"DobbyHook_DEVELOPER") target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+			[specifier setIdentifier:@"jmpews"];
+			specifier->action = @selector(openWebsite:);
+			[specifier setProperty:[NSNumber numberWithBool:TRUE] forKey:@"hasIcon"];
+			[specifier setProperty:[UIImage imageWithContentsOfFile:[[self bundle] pathForResource:@"Twitter" ofType:@"png"]] forKey:@"iconImage"];
+			specifier;
+		})];
+
+		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_DESIGNER") target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
 			specifier;
 		})];
@@ -237,7 +261,7 @@ static const NSBundle *tweakBundle;
 
 
 		[specifiers addObject:({
-			NSString *year = @"2020";
+			NSString *year = @"2020 ~ 2021";
 			PSSpecifier *specifier = [[PSSpecifier alloc] init];
 			[specifier.properties setValue:@"2" forKey:@"footerAlignment"];
 			[specifier.properties setValue:[NSString stringWithFormat:LOCALIZED(@"FlyJB_LASTMSG"), vers, year] forKey:@"footerText"];
@@ -462,11 +486,14 @@ static const NSBundle *tweakBundle;
 	if([value isEqualToString:@"ShowPatchData"]) {
 		url = @"https://xsf1re.dothome.co.kr/flyjb/update.txt";
 	}
-    if([value isEqualToString:@"ShowSourceCode"]) {
-        url = @"https://github.com/XsF1re/FlyJB-X";
-    }
+  if([value isEqualToString:@"ShowSourceCode"]) {
+    url = @"https://github.com/XsF1re/FlyJB-X";
+  }
 	if([value isEqualToString:@"XsF1re"]) {
 		url = @"https://twitter.com/XsF1re";
+	}
+	if([value isEqualToString:@"jmpews"]) {
+		url = @"https://twitter.com/jmpews";
 	}
 	if([value isEqualToString:@"Sultan"]) {
 		url = @"https://twitter.com/su8782";

@@ -23,6 +23,23 @@ uint8_t B8[] = {
 	0x02, 0x00, 0x00, 0x14  //B #0x8
 };
 
+uint8_t SYSOpenBlock[] = {
+	0xB0, 0x00, 0x80, 0xD2, //MOV X16, #5
+	0x00, 0x00, 0x80, 0x52  //MOV X0, #0
+};
+
+uint8_t SYSAccessBlock[] = {
+	0xB0, 0x00, 0x80, 0xD2,	//MOV X16, #21
+	0x40, 0x00, 0x80, 0x52	//MOV X0, #2
+};
+
+uint8_t SYSAccessNOPBlock[] = {
+	0xB0, 0x00, 0x80, 0xD2, //MOV X16, #21
+	0x1F, 0x20, 0x03, 0xD5,  //NOP
+	0x1F, 0x20, 0x03, 0xD5,  //NOP
+	0x1F, 0x20, 0x03, 0xD5,  //NOP
+	0x40, 0x00, 0x80, 0x52  //MOV X0, #2
+};
 
 void (*orig_subroutine)(void);
 void nothing(void)
@@ -31,44 +48,62 @@ void nothing(void)
 }
 
 void startHookTarget_lxShield(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match - 0x1C, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab2(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match - 0x10, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab3(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match - 0x8, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AhnLab4(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match - 0x10, RET, sizeof(RET));
 #endif
 }
 
 void startHookTarget_AppSolid(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	hook_memory(match, B8, sizeof(B8));
+#endif
+}
+
+void startPatchTarget_SYSAccess(uint8_t* match) {
+#if defined __arm64__
+	hook_memory(match, SYSAccessBlock, sizeof(SYSAccessBlock));
+#endif
+}
+
+void startPatchTarget_SYSAccessNOP(uint8_t* match) {
+#if defined __arm64__
+	hook_memory(match, SYSAccessNOPBlock, sizeof(SYSAccessNOPBlock));
+#endif
+}
+
+void startPatchTarget_SYSOpen(uint8_t* match) {
+#if defined __arm64__
+	hook_memory(match, SYSOpenBlock, sizeof(SYSOpenBlock));
 #endif
 }
 
 // ====== PATCH CODE ====== //
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
 
 	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
@@ -90,7 +125,7 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 }
 
 void startHookTarget_SVC80(uint8_t* match) {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	dobby_enable_near_branch_trampoline();
 	DobbyInstrument((void *)(match), (DBICallTy)SVC80_handler);
 	dobby_disable_near_branch_trampoline();
@@ -98,7 +133,7 @@ void startHookTarget_SVC80(uint8_t* match) {
 }
 
 void loadSVC80MemHooks() {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	const uint8_t target[] = {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
@@ -108,7 +143,7 @@ void loadSVC80MemHooks() {
 
 // ====== PATCH FROM FJMemory ====== //
 void loadFJMemoryHooks() {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
@@ -129,7 +164,7 @@ void loadFJMemoryHooks() {
 %group FJMemoryIntegrityRecoverHMS
 %hook NSFileManager
 - (BOOL)fileExistsAtPath: (NSString *)path {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	if([path hasSuffix:@"/com.vungle/userInfo"]) {
 		NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 		NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
@@ -154,7 +189,7 @@ void loadFJMemoryHooks() {
 %group FJMemoryIntegrityRecoverLMP
 %hook XASAskJobs
 +(int)updateCheck {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSDictionary *dict = [[[MemHooks alloc] init] getFJMemory];
@@ -198,7 +233,7 @@ void loadFJMemorySymbolHooks() {
 }
 
 void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-	#if defined __arm64__ && not defined __arm64e__
+	#if defined __arm64__
 	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
@@ -217,7 +252,7 @@ void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 }
 
 void loadOpendirMemHooks() {
-#if defined __arm64__ && not defined __arm64e__
+#if defined __arm64__
 	//dobby_enable_near_branch_trampoline();
 	DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "opendir"), (DBICallTy)opendir_handler);
 	//dobby_disable_near_branch_trampoline();

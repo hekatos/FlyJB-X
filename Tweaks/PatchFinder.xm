@@ -271,3 +271,28 @@ void loadAppSolidMemHooks() {
 	scan_executable_memory(target, sizeof(target), &startHookTarget_AppSolid);
 #endif
 }
+
+void loadSVC80MemPatch() {
+#if defined __arm64__ || defined __arm64e__
+	const uint8_t target[] = {
+		0x30, 0x04, 0x80, 0xD2,	//MOV X16, #21
+		0x01, 0x10, 0x00, 0xD4	//SVC #0x80
+	};
+	scan_executable_memory(target, sizeof(target), &startPatchTarget_SYSAccess);
+
+	const uint8_t target2[] = {
+		0x30, 0x04, 0x80, 0xD2,         //MOV X16, #21
+		0x1F, 0x20, 0x03, 0xD5,         //NOP
+		0x1F, 0x20, 0x03, 0xD5,         //NOP
+		0x1F, 0x20, 0x03, 0xD5,         //NOP
+		0x01, 0x10, 0x00, 0xD4          //SVC #0x80
+	};
+	scan_executable_memory(target2, sizeof(target2), &startPatchTarget_SYSAccessNOP);
+
+	const uint8_t target3[] = {
+		0xB0, 0x00, 0x80, 0xD2, //MOV X16, #5
+		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
+	};
+	scan_executable_memory(target3, sizeof(target3), &startPatchTarget_SYSOpen);
+#endif
+}

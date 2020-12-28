@@ -13,6 +13,9 @@ void startHookTarget_AhnLab2(uint8_t* match);
 void startHookTarget_AhnLab3(uint8_t* match);
 void startHookTarget_AhnLab4(uint8_t* match);
 void startHookTarget_AppSolid(uint8_t* match);
+void startPatchTarget_SYSAccess(uint8_t* match);
+void startPatchTarget_SYSAccessNOP(uint8_t* match);
+void startPatchTarget_SYSOpen(uint8_t* match);
 
 @interface MemHooks: NSObject
 - (NSDictionary *)getFJMemory;

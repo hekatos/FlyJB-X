@@ -20,6 +20,8 @@
 자동으로 리스프링됩니다.</string>
 	<key>FlyJB_CREDIT</key>
 	<string>제작자</string>
+    <key>DobbyHook_DEVELOPER</key>
+    <string>@jmpews (개발자)</string>
 	<key>FlyJB_DESIGNER</key>
 	<string>emulzone (디자인)</string>
 	<key>FlyJB_DEVELOPER</key>
@@ -31,6 +33,8 @@
 Substitute 또는 Cydia Substrate와 앱이 충돌하는 경우만 사용하세요.</string>
 	<key>FlyJB_ENABLE</key>
 	<string>사용</string>
+    <key>FlyJB_ENABLE_DOBBY</key>
+    <string>DobbyHook 사용</string>
 	<key>FlyJB_ETCOPTIONS</key>
 	<string>기타 옵션</string>
 	<key>FlyJB_FEEDBACK</key>
