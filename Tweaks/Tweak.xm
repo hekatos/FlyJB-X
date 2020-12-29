@@ -68,6 +68,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
 	BOOL isSubstitute = ([[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libsubstitute.dylib"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/substrate"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"]);
+	BOOL isLibHooker = [[NSFileManager defaultManager] fileExistsAtPath:@"/usr/lib/libhooker.dylib"];
 	BOOL DobbyHook = [prefs[@"enableDobby"] boolValue];
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
@@ -271,13 +272,13 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 				}
 			}
 
-//Arxan - 스마일페이, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 삼성카드 마이홈,  페이코
+//Arxan - 스마일페이, THE POP, 나만의 냉장고(GS25), GS수퍼마켓, BC카드, 페이코
 			NSArray *ArxanApps = [NSArray arrayWithObjects:
 																@"com.mysmilepay.app",
 																@"com.gsretail.ios.thepop",
 																@"com.gsretail.gscvs",
+																@"com.gsretail.supermarket",
 																@"com.bccard.iphoneapp",
-																@"com.samsungCard.samsungCard",
 																@"com.nhnent.TOASTPAY",
 																nil
 																];
@@ -285,7 +286,10 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			for(NSString* app in ArxanApps) {
 				if([bundleID isEqualToString:app]) {
 					if(DobbyHook) {
-						loadSVC80MemHooks();
+						if(isSubstitute || isLibHooker)
+							loadSVC80MemHooks();
+						else
+							loadSVC80AccessMemHooks();
 					}
 					else {
 						//Disabled DobbyHook...

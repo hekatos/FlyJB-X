@@ -141,6 +141,47 @@ void loadSVC80MemHooks() {
 #endif
 }
 
+void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+#if defined __arm64__
+	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
+	NSString* path2 = [NSString stringWithUTF8String:path];
+
+	//int num_syscall = (int)(uint64_t)reg_ctx->general.regs.x16;
+	//NSLog(@"[FlyJB] Detected SVC #0x80 number = %d", num_syscall);
+
+//Arxan 솔루션에서는 /sbin/mount 파일이 존재해야 우회됨.
+	if(![path2 hasSuffix:@"/sbin/mount"] && [FJPatternX isPathRestrictedForSymlink:path2]) {
+		//Start Bypass
+		NSLog(@"[FlyJB] Bypassed SVC #0x80 - SYS_Access path = %s", path);
+		*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";
+	}
+	else {
+		NSLog(@"[FlyJB] Detected SVC #0x80 - SYS_Access path = %s", path);
+	}
+
+#endif
+}
+
+void startHookTarget_SVC80Access(uint8_t* match) {
+#if defined __arm64__
+	dobby_enable_near_branch_trampoline();
+	DobbyInstrument((void *)(match), (DBICallTy)SVC80Access_handler);
+	dobby_disable_near_branch_trampoline();
+#endif
+}
+
+void loadSVC80AccessMemHooks() {
+#if defined __arm64__
+	const uint8_t target[] = {
+		0x30, 0x04, 0x80, 0xD2, //MOV X16, #21
+		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80Access);
+#endif
+}
+
+
+
 // ====== PATCH FROM FJMemory ====== //
 void loadFJMemoryHooks() {
 #if defined __arm64__
@@ -238,11 +279,8 @@ void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
 	if([FJPatternX isPathRestricted:path2]) {
+		*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re_Bypass!@#";
 		NSLog(@"[FlyJB] Bypassed opendir path = %s", path);
-		unsigned long fileValue = 0;
-		__asm __volatile("mov x0, %0" :: "r" ("/XsF1re_Bypass!@#"));         //path
-		__asm __volatile("mov %0, x0" : "=r" (fileValue));
-		*(unsigned long *)(&reg_ctx->general.regs.x0) = fileValue;
 	}
 	else {
 		NSLog(@"[FlyJB] Detected opendir path = %s", path);

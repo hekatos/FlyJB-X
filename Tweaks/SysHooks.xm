@@ -1,5 +1,6 @@
 #import "../Headers/SysHooks.h"
 #import "../Headers/FJPattern.h"
+#import "../fishhook/fishhook.h"
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <mach-o/dyld.h>
@@ -94,6 +95,7 @@
 
 static int (*orig_open)(const char *path, int oflag, ...);
 static int hook_open(const char *path, int oflag, ...) {
+	NSLog(@"[FlyJB] hook_open work? %s", path);
 	int result = 0;
 
 	if(path) {
@@ -473,7 +475,11 @@ void syncDyldArray() {
 
 void loadSysHooks() {
 	%init(SysHooks);
-	MSHookFunction((void *) open, (void *) hook_open, (void **) &orig_open);
+	//Substrate crash when hook open... WTF?
+	//MSHookFunction((void *) open, (void *) hook_open, (void **) &orig_open);
+
+	//Use fishhook instead :)
+	rebind_symbols((struct rebinding[1]){{"open", (void *)hook_open, (void **)&orig_open}}, 1);
 }
 
 void loadSysHooks2() {
