@@ -460,7 +460,8 @@ void syncDyldArray() {
 %end
 
 %group OpendirSysHooks
-%hookf(DIR *, opendir, const char* pathname) {
+DIR *(*orig_opendir)(const char *pathname);
+static DIR *hook_opendir(const char *pathname) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 		if([FJPatternX isPathRestricted:path])
@@ -469,7 +470,7 @@ void syncDyldArray() {
 			return NULL;
 		}
 	}
-	return %orig(pathname);
+	return orig_opendir(pathname);
 }
 %end
 
@@ -484,7 +485,7 @@ void loadSysHooks() {
 
 void loadSysHooks2() {
 	%init(SysHooks2);
-	MSHookFunction((void *)MSFindSymbol(NULL, "_syscall"),(void*)hook_syscall,(void**)&orig_syscall);
+	MSHookFunction(dlsym((void *)RTLD_DEFAULT, "syscall"),(void*)hook_syscall,(void**)&orig_syscall);
 }
 
 void loadSysHooks3() {
@@ -498,4 +499,5 @@ void loadSysHooks4() {
 
 void loadOpendirSysHooks() {
 	%init(OpendirSysHooks);
+	rebind_symbols((struct rebinding[1]){{"opendir", (void *)hook_opendir, (void **)&orig_opendir}}, 1);
 }

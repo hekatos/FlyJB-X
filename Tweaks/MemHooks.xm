@@ -177,6 +177,15 @@ void loadSVC80AccessMemHooks() {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_SVC80Access);
+
+	const uint8_t target2[] = {
+		0x30, 0x04, 0x80, 0xD2, //MOV X16, #21
+		0x1F, 0x20, 0x03, 0xD5,  //NOP
+		0x1F, 0x20, 0x03, 0xD5,  //NOP
+		0x1F, 0x20, 0x03, 0xD5,  //NOP
+		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
+	};
+	scan_executable_memory(target2, sizeof(target2), &startHookTarget_SVC80Access);
 #endif
 }
 
@@ -271,28 +280,4 @@ void loadFJMemorySymbolHooks() {
 		const char *dict_Symbol_cs = [dict_Symbol cStringUsingEncoding:NSUTF8StringEncoding];
 		MSHookFunction(MSFindSymbol(NULL, dict_Symbol_cs), (void *)nothing, (void **)&orig_subroutine);
 	}
-}
-
-void opendir_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-	#if defined __arm64__
-	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
-	NSString* path2 = [NSString stringWithUTF8String:path];
-
-	if([FJPatternX isPathRestricted:path2]) {
-		*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re_Bypass!@#";
-		NSLog(@"[FlyJB] Bypassed opendir path = %s", path);
-	}
-	else {
-		NSLog(@"[FlyJB] Detected opendir path = %s", path);
-	}
-
-	#endif
-}
-
-void loadOpendirMemHooks() {
-#if defined __arm64__
-	//dobby_enable_near_branch_trampoline();
-	DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "opendir"), (DBICallTy)opendir_handler);
-	//dobby_disable_near_branch_trampoline();
-#endif
 }

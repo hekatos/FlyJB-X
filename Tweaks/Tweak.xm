@@ -262,7 +262,10 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			for(NSString* app in mVaccineApps) {
 				if([bundleID isEqualToString:app]) {
 					if(DobbyHook) {
-						loadSVC80MemHooks();
+						if(isSubstitute || isLibHooker)
+							loadSVC80MemHooks();
+						else
+							loadSVC80AccessMemHooks();
 					}
 					else {
 						//Disabled DobbyHook...
@@ -306,10 +309,8 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 					loadSysHooks3();
 			}
 
-			if(isSubstitute)
-				loadOpendirMemHooks();
-			else
-				loadOpendirSysHooks();
+
+			loadOpendirSysHooks();
 
 			loadObjCHooks();
 			loadSysHooks();
