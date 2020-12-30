@@ -4,14 +4,14 @@
 static NSError *_error_file_not_found = nil;
 
 %group ObjCHooks
-%hook NSProcessInfo
--(NSDictionary*)environment {
-	NSDictionary *orig = %orig;
-	NSMutableDictionary *dict = [orig mutableCopy];
-	[dict removeObjectForKey:@"DYLD_INSERT_LIBRARIES"];
-	return dict;
-}
-%end
+// %hook NSProcessInfo
+// -(NSDictionary*)environment {
+// 	NSDictionary *orig = %orig;
+// 	NSMutableDictionary *dict = [orig mutableCopy];
+// 	[dict removeObjectForKey:@"DYLD_INSERT_LIBRARIES"];
+// 	return dict;
+// }
+// %end
 
 %hook UIApplication
 - (BOOL)canOpenURL: (NSURL *)url {

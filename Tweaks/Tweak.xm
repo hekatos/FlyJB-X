@@ -302,8 +302,8 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 				}
 			}
 
-//하나카드, NEW하나은행은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
-			if(![bundleID isEqualToString:@"com.hanaskcard.mobileportal"] && ![bundleID isEqualToString:@"com.kebhana.hanapush"]) {
+//하나카드, NEW하나은행, 하나멤버스는 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+			if(![bundleID isEqualToString:@"com.hana.hanamembers"] && ![bundleID isEqualToString:@"com.hanaskcard.mobileportal"] && ![bundleID isEqualToString:@"com.kebhana.hanapush"]) {
 				loadSysHooks2();
 				if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
 					loadSysHooks3();

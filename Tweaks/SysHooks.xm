@@ -1,6 +1,7 @@
 #import "../Headers/SysHooks.h"
 #import "../Headers/FJPattern.h"
 #import "../fishhook/fishhook.h"
+#import "../Headers/dobby.h"
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <mach-o/dyld.h>
@@ -14,6 +15,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <dirent.h>
+
+#define kCFCoreFoundationVersionNumber_iOS_14_0 1740.00
 
 %group SysHooks
 
@@ -84,18 +87,15 @@
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 		if([FJPatternX isPathRestricted:path])
 		{
-			NSLog(@"[FlyJB] Bypassed access: %s", pathname);
 			errno = ENOENT;
 			return -1;
 		}
 	}
-	NSLog(@"[FlyJB] Detected access: %s", pathname);
 	return %orig;
 }
 
 static int (*orig_open)(const char *path, int oflag, ...);
 static int hook_open(const char *path, int oflag, ...) {
-	NSLog(@"[FlyJB] hook_open work? %s", path);
 	int result = 0;
 
 	if(path) {
@@ -234,11 +234,11 @@ static int hook_syscall(int num, ...) {
 	if(num == SYS_access || num == SYS_open || num == SYS_stat || num == SYS_lstat || num == SYS_stat64 || num == SYS_chdir || num == SYS_chroot) {
 		const char *path = va_arg(args, const char*);
 		if([FJPatternX isPathRestricted:[NSString stringWithUTF8String:path]]) {
-			NSLog(@"[FlyJB] Blocked Syscall Path = %s, num = %d", path, num);
+			//NSLog(@"[FlyJB] Blocked Syscall Path = %s, num = %d", path, num);
 			errno = ENOENT;
 			return -1;
 		}
-		NSLog(@"[FlyJB] Detected Syscall Path = %s, num = %d", path, num);
+		//NSLog(@"[FlyJB] Detected Syscall Path = %s, num = %d", path, num);
 	}
 
 	if(num == SYS_mkdir) {
@@ -474,13 +474,30 @@ static DIR *hook_opendir(const char *pathname) {
 }
 %end
 
+void open_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
+#if defined __arm64__
+	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
+	NSString* path2 = [NSString stringWithUTF8String:path];
+
+	if([FJPatternX isPathRestricted:path2]) {
+		//NSLog(@"[FlyJB] Bypassed open path = %s", path);
+		unsigned long fileValue = 0;
+		__asm __volatile("mov x0, %0" :: "r" ("/XsF1re_Bypass!@#"));         //path
+		__asm __volatile("mov %0, x0" : "=r" (fileValue));
+		*(unsigned long *)(&reg_ctx->general.regs.x0) = fileValue;
+	}
+	else {
+		//NSLog(@"[FlyJB] Detected open path = %s", path);
+	}
+
+#endif
+}
+
 void loadSysHooks() {
 	%init(SysHooks);
-	//Substrate crash when hook open... WTF?
-	//MSHookFunction((void *) open, (void *) hook_open, (void **) &orig_open);
-
-	//Use fishhook instead :)
-	rebind_symbols((struct rebinding[1]){{"open", (void *)hook_open, (void **)&orig_open}}, 1);
+	//Substrate crash when hook open on iOS 14... WTF?
+	//Use dobbyhook instead :)
+	DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "open"), (DBICallTy)open_handler);
 }
 
 void loadSysHooks2() {

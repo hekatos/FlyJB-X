@@ -1,6 +1,24 @@
 #import "../Headers/FJPattern.h"
 
 @implementation FJPattern
+-(BOOL) isCrashAppWithSubstitutor: (NSString*) bundleID
+{
+	//롯데면세점, KB리브, 유플패스, 리브메이트, KB Pay
+	NSArray *ConflictApps = [NSArray arrayWithObjects:
+	                                @"com.lotte.lotteDfs",
+	                                @"com.kbstar.liivbank",
+	                                @"com.lguplus.auth.ios",
+	                                @"com.kbcard.kat.liivmate",
+	                                @"com.kbcard.cxh.appcard",
+	                                nil
+	                               ];
+	for (NSString *app in ConflictApps) {
+		if ([bundleID isEqualToString:app])
+			return YES;
+	}
+	return NO;
+}
+
 -(BOOL) isSandBoxPathRestricted: (NSString*) path
 {
 	if ([path hasPrefix:@"/var/containers"]
