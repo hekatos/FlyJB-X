@@ -27,7 +27,7 @@
 	<key>FlyJB_DEVELOPER</key>
 	<string>@XsF1re (개발자)</string>
 	<key>FlyJB_DISABLERLIST</key>
-	<string>Substitute/Cydia Substrate 비활성화</string>
+	<string>모든 트윅 비활성화</string>
 	<key>FlyJB_DISABLER_DESC</key>
 	<string>특정 앱에 대한 모든 트윅 적용이 해제됩니다.
 Substitute 또는 Cydia Substrate와 앱이 충돌하는 경우만 사용하세요.</string>

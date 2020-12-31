@@ -20,11 +20,11 @@
 
 %group SysHooks
 
-%hookf(void, exit, int code) {
-	NSLog(@"[FlyJB] exit called");
-	NSLog(@"[FlyJB] call stack:\n%@", [NSThread callStackSymbols]);
-	%orig;
-}
+// %hookf(void, exit, int code) {
+// 	NSLog(@"[FlyJB] exit called");
+// 	NSLog(@"[FlyJB] exit call stack:\n%@", [NSThread callStackSymbols]);
+// 	%orig;
+// }
 
 %hookf(int, uname, struct utsname *value) {
 	int ret = %orig;

@@ -2,18 +2,17 @@
 #import "../Headers/FJPattern.h"
 
 %group LibraryHooks
+
 //NHN Payco (페이코)
-/*
 %hook Diresu
 +(int)s: (id)arg1: (id)arg2: (id)arg3: (id)arg4 {
 	return 0;
 }
 %end
-*/
 
 // %hook NPGC
 // +(void)showQDI {
-// 	NSLog(@"[FlyJB] call stack:\n%@", [NSThread callStackSymbols]);
+// 	NSLog(@"[FlyJB] showQDI call stack:\n%@", [NSThread callStackSymbols]);
 // 	%orig;
 // }
 // %end

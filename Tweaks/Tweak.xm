@@ -130,8 +130,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 
 //Arxan 심볼 패치
 			if([bundleID isEqualToString:@"com.kakaobank.channel"]) {
-				//loadFJMemorySymbolHooks();
-				//kakaoBankPatch();
 				NSLog(@"[FlyJB] kakaoBankPatch: %d", kakaoBankPatch());
 			}
 //AhnLab Mobile Security - NH올원페이, 하나카드, NH스마트뱅킹, NH농협카드, 하나카드 원큐페이(앱카드), NH스마트알림, NH올원뱅크

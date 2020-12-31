@@ -24,7 +24,7 @@
 		NSString *nspath = [NSString stringWithUTF8String:path];
 		if([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
 		   && [nspath hasSuffix:@".plist"]) {
-			NSLog(@"[FlyJB] access blocked: %@", nspath);
+			// NSLog(@"[FlyJB] access blocked: %@", nspath);
 			errno = EACCES;
 			return -1;
 		}
