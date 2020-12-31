@@ -11,6 +11,13 @@
 %end
 */
 
+// %hook NPGC
+// +(void)showQDI {
+// 	NSLog(@"[FlyJB] call stack:\n%@", [NSThread callStackSymbols]);
+// 	%orig;
+// }
+// %end
+
 //AppGuardToast 뱅뱅뱅 상상인디지털뱅크
 %hook AGFramework
 -(void)CGColorSpaceCopyName: (BOOL)arg1 B: (void *)arg2 {
@@ -169,6 +176,17 @@
 %end
 
 //AhnLab
+//SBI저축은행
+%hook LayoutManag
+-(int)a3142:(id)arg1 {
+	return 200;
+}
+
+-(int)timestamp {
+	return 0;
+}
+%end
+
 %hook AMSLFairPlayInspector
 +(id)unarchive: (id)arg1 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];

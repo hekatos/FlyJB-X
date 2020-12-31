@@ -18,6 +18,9 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 @interface SBHomeScreenViewController : UIViewController
 @end
 
+@interface NSDistributedNotificationCenter : NSNotificationCenter
+@end
+
 @interface LSApplicationProxy
 +(LSApplicationProxy *)applicationProxyForIdentifier:(NSString *)bundleId;
 -(NSString *)bundleExecutable;
@@ -61,6 +64,24 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 %end
 %end
 
+%group TossAppProtection
+%hook SBHomeScreenViewController
+-(void)loadView {
+	%orig;
+	[[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"kr.xsf1re.flyjbcenter" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+		// [self performSelector:selector];
+		if([[notification.userInfo objectForKey:@"terminateReason"] isEqualToString:@"bypassFailedToss"]) {
+		UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"FlyJB X" message:@"토스 계정이 정지될 위험한 상황으로부터 보호되었습니다.\n\n토스 탈옥감지를 우회하는데 실패한 것으로 판단되어 앱을 강제 종료하였습니다." preferredStyle: UIAlertControllerStyleAlert];
+		[alert addAction:[UIAlertAction actionWithTitle:@"확인" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+		                          [alert dismissViewControllerAnimated:YES completion:nil];
+				  }]];
+		[self presentViewController:alert animated:true completion:nil];
+	}
+}];
+}
+%end
+%end
+
 %ctor{
 
 	NSLog(@"[FlyJB] Loaded!!!");
@@ -73,10 +94,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		loadNoSafeMode();
-
-		if(![prefs[@"enabled"] boolValue] || ![prefs[@"com.vivarepublica.cash"] boolValue]) {
-			exit(0);
-		}
 	}
 
 	if (![[NSFileManager defaultManager] fileExistsAtPath:@"/var/lib/dpkg/info/kr.xsf1re.flyjbx.list"]) {
@@ -89,6 +106,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 		return;
 	}
 
+	%init(TossAppProtection);
 	loadDisableInjector();
 
 	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
@@ -302,8 +320,25 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 				}
 			}
 
-//하나카드, NEW하나은행, 하나멤버스는 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
-			if(![bundleID isEqualToString:@"com.hana.hanamembers"] && ![bundleID isEqualToString:@"com.hanaskcard.mobileportal"] && ![bundleID isEqualToString:@"com.kebhana.hanapush"]) {
+//하나카드, NEW하나은행, Arxan 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
+		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:
+															 @"com.hanaskcard.mobileportal",
+															 @"com.kebhana.hanapush",
+															 nil
+															 ];
+
+		 [blacklistApps addObjectsFromArray: ArxanApps];
+
+		 BOOL enableSysHook = true;
+		 for(NSString* app in blacklistApps) {
+			 if([bundleID isEqualToString:app]) {
+				 enableSysHook = false;
+				 break;
+			 }
+		 }
+
+
+			if(enableSysHook) {
 				loadSysHooks2();
 				if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
 					loadSysHooks3();
@@ -315,11 +350,10 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			loadObjCHooks();
 			loadSysHooks();
 			loadLibraryHooks();
-
-//토스 탈옥감지 확인
-			if([bundleID isEqualToString:@"com.vivarepublica.cash"])
-				loadCheckHooks();
-
 		}
 	}
+
+	//토스 탈옥감지 확인
+	if([bundleID isEqualToString:@"com.vivarepublica.cash"])
+		loadCheckHooks();
 }
