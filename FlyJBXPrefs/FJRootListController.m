@@ -484,7 +484,7 @@ static const NSBundle *tweakBundle;
 	NSString *value = specifier.identifier;
 	NSString *url = nil;
 	if([value isEqualToString:@"ShowPatchData"]) {
-		url = @"https://xsf1re.dothome.co.kr/flyjb/update.txt";
+		url = @"http://xsf1re.dothome.co.kr/flyjb/update.html";
 	}
   if([value isEqualToString:@"ShowSourceCode"]) {
     url = @"https://github.com/XsF1re/FlyJB-X";
