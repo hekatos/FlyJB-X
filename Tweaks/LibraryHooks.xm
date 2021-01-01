@@ -122,7 +122,7 @@
 %hook XASBase64
 +(id)decode: (char *)arg1 {
 	NSString *path = %orig;
-	if([FJPatternX isPathRestricted:path])
+	if([[FJPattern sharedInstance] isPathRestricted:path])
 		return nil;
 	return %orig(arg1);
 }
@@ -211,7 +211,7 @@
 - (id)decrypt: (id)arg1 key: (id)arg2 padding: (int)arg3 {
 	NSData *orig = %orig;
 	NSString* decode = [[NSString alloc] initWithData:orig encoding:NSUTF8StringEncoding];
-	if([FJPatternX isPathRestricted:decode] || [FJPatternX isAhnLabPathRestricted:decode])
+	if([[FJPattern sharedInstance] isPathRestricted:decode] || [[FJPattern sharedInstance] isAhnLabPathRestricted:decode])
 		return [@"/AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
 	return %orig;
 }
@@ -221,7 +221,7 @@
 - (id)decrypt: (id)arg1 key: (id)arg2 padding: (int)arg3 {
 	NSData *orig = %orig;
 	NSString* decode = [[NSString alloc] initWithData:orig encoding:NSUTF8StringEncoding];
-	if([FJPatternX isPathRestricted:decode] || [FJPatternX isAhnLabPathRestricted:decode])
+	if([[FJPattern sharedInstance] isPathRestricted:decode] || [[FJPattern sharedInstance] isAhnLabPathRestricted:decode])
 		return [@"/AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
 	return %orig;
 }
@@ -231,7 +231,7 @@
 - (id)decrypt: (id)arg1 key: (id)arg2 padding: (int)arg3 {
 	NSData *orig = %orig;
 	NSString* decode = [[NSString alloc] initWithData:orig encoding:NSUTF8StringEncoding];
-	if([FJPatternX isPathRestricted:decode] || [FJPatternX isAhnLabPathRestricted:decode])
+	if([[FJPattern sharedInstance] isPathRestricted:decode] || [[FJPattern sharedInstance] isAhnLabPathRestricted:decode])
 		return [@"/AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
 	return %orig;
 }
@@ -241,7 +241,7 @@
 - (id)decrypt: (id)arg1 key: (id)arg2 padding: (int)arg3 {
 	NSData *orig = %orig;
 	NSString* decode = [[NSString alloc] initWithData:orig encoding:NSUTF8StringEncoding];
-	if([FJPatternX isPathRestricted:decode] || [FJPatternX isAhnLabPathRestricted:decode])
+	if([[FJPattern sharedInstance] isPathRestricted:decode] || [[FJPattern sharedInstance] isAhnLabPathRestricted:decode])
 		return [@"/AhnLab.bypass" dataUsingEncoding:NSUTF8StringEncoding];
 	return %orig;
 }

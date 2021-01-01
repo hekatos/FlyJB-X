@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 FRAMEWORK_NAME = FJHooker
 
-FJHooker_FILES = FJHooker.m fishhook/fishhook.c FJHPattern.m
+FJHooker_FILES = FJHooker.m ../fishhook/fishhook.c ../Tweaks/FJPattern.xm
 FJHooker_PUBLIC_HEADERS = FJHooker.h
 FJHooker_INSTALL_PATH = /Library/Frameworks
 FJHooker_CFLAGS = -fobjc-arc

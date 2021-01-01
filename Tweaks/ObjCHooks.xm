@@ -15,7 +15,7 @@ static NSError *_error_file_not_found = nil;
 
 %hook UIApplication
 - (BOOL)canOpenURL: (NSURL *)url {
-	if([FJPatternX isURLRestricted:url]) {
+	if([[FJPattern sharedInstance] isURLRestricted:url]) {
 		return NO;
 	}
 	return %orig;
@@ -24,7 +24,7 @@ static NSError *_error_file_not_found = nil;
 
 %hook NSString
 - (BOOL)writeToFile: (NSString *)path atomically: (BOOL)useAuxiliaryFile encoding: (NSStringEncoding)enc error: (NSError * _Nullable *)error {
-	if([FJPatternX isSandBoxPathRestricted:path]) {
+	if([[FJPattern sharedInstance] isSandBoxPathRestricted:path]) {
 		return %orig(nil, useAuxiliaryFile, enc, error);
 	}
 	else {
@@ -33,7 +33,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (BOOL)writeToFile: (NSString *)path  {
-	if([FJPatternX isSandBoxPathRestricted:path]) {
+	if([[FJPattern sharedInstance] isSandBoxPathRestricted:path]) {
 		return NO;
 	}
 	else {
@@ -44,7 +44,7 @@ static NSError *_error_file_not_found = nil;
 //NSHC BinaryChecker and etc... +mVaccine v2
 - (NSString *)substringFromIndex: (NSUInteger)from {
 	NSString *orig = %orig;
-	if(from == 2 && [orig hasPrefix:@"/"] && [FJPatternX isPathRestricted:orig])
+	if(from == 2 && [orig hasPrefix:@"/"] && [[FJPattern sharedInstance] isPathRestricted:orig])
 	{
 		return @"/substringFromIndexHooked";
 	}
@@ -54,14 +54,14 @@ static NSError *_error_file_not_found = nil;
 
 %hook NSFileManager
 - (BOOL)isReadableFileAtPath: (NSString *)path {
-	if([FJPatternX isPathRestricted:path]) {
+	if([[FJPattern sharedInstance] isPathRestricted:path]) {
 		return NO;
 	}
 	return %orig;
 }
 
 - (NSString *)destinationOfSymbolicLinkAtPath: (NSString *)path error: (NSError * _Nullable *)error {
-	if([FJPatternX isPathRestricted:path]) {
+	if([[FJPattern sharedInstance] isPathRestricted:path]) {
 		if(error) {
 			*error = _error_file_not_found;
 		}
@@ -80,7 +80,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (NSArray<NSString *> *)contentsOfDirectoryAtPath: (NSString *)path error: (NSError * _Nullable *)error {
-	if([FJPatternX isPathRestricted:path]
+	if([[FJPattern sharedInstance] isPathRestricted:path]
 	   || [path isEqualToString:@"/bin"]) {
 		if(error) {
 			*error = _error_file_not_found;
@@ -92,7 +92,7 @@ static NSError *_error_file_not_found = nil;
 	if(ret) {
 		filtered_ret = [NSMutableArray new];
 		for(NSString *ret_path in ret) {
-			if(![FJPatternX isPathRestricted:[path stringByAppendingPathComponent:ret_path]]) {
+			if(![[FJPattern sharedInstance] isPathRestricted:[path stringByAppendingPathComponent:ret_path]]) {
 				[filtered_ret addObject:ret_path];
 			}
 		}
@@ -102,7 +102,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 -(BOOL) changeCurrentDirectoryPath: (NSString *)path {
-	if([FJPatternX isPathRestricted:path])
+	if([[FJPattern sharedInstance] isPathRestricted:path])
 	{
 		return NO;
 	}
@@ -110,7 +110,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (BOOL)removeItemAtPath: (NSString *)path {
-	if([FJPatternX isSandBoxPathRestricted:path]) {
+	if([[FJPattern sharedInstance] isSandBoxPathRestricted:path]) {
 		return NO;
 	}
 	else {
@@ -119,7 +119,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (BOOL)fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory {
-	if([FJPatternX isPathRestricted:path])
+	if([[FJPattern sharedInstance] isPathRestricted:path])
 	{
 		return NO;
 	}
@@ -127,7 +127,7 @@ static NSError *_error_file_not_found = nil;
 }
 
 - (BOOL)fileExistsAtPath: (NSString *)path {
-	if([FJPatternX isPathRestricted:path])
+	if([[FJPattern sharedInstance] isPathRestricted:path])
 	{
 		return NO;
 	}

@@ -1,14 +1,14 @@
 #import "FJHooker.h"
-#import "fishhook/fishhook.h"
+#import "../fishhook/fishhook.h"
 #import <objc/runtime.h>
 #import <CaptainHook/CaptainHook.h>
-#import "FJHPattern.h"
+#import "../Headers/FJPattern.h"
 
 CHDeclareClass(UIApplication);
 CHMethod1(BOOL, UIApplication, canOpenURL, NSURL *, url)
 {
-  if([FJHPattern isURLRestricted:url]) {
-    NSLog(@"[FJHooker] Blocked canOpenURL %@", url);
+  if([[FJPattern sharedInstance] isURLRestricted:url]) {
+    // NSLog(@"[FJHooker] Blocked canOpenURL %@", url);
     return NO;
   }
   //NSLog(@"[FJHooker] Detected canOpenURL %@", url);
@@ -18,8 +18,8 @@ CHMethod1(BOOL, UIApplication, canOpenURL, NSURL *, url)
 CHDeclareClass(NSFileManager);
 CHMethod1(BOOL, NSFileManager, fileExistsAtPath, NSString *, path)
 {
-    if([FJHPattern isPathRestricted:path]) {
-      NSLog(@"[FJHooker] Blocked fileExistsAtPath %@", path);
+    if([[FJPattern sharedInstance] isPathRestricted:path]) {
+      // NSLog(@"[FJHooker] Blocked fileExistsAtPath %@", path);
       return NO;
     }
     //NSLog(@"[FJHooker] Detected fileExistsAtPath %@", path);
@@ -28,8 +28,8 @@ CHMethod1(BOOL, NSFileManager, fileExistsAtPath, NSString *, path)
 
 CHMethod2(BOOL, NSFileManager, fileExistsAtPath, NSString *, path, isDirectory, BOOL *, isDirectory)
 {
-    if([FJHPattern isPathRestricted:path]) {
-      NSLog(@"[FJHooker] Blocked fileExistsAtPath isDirectory %@", path);
+    if([[FJPattern sharedInstance] isPathRestricted:path]) {
+      // NSLog(@"[FJHooker] Blocked fileExistsAtPath isDirectory %@", path);
       return NO;
     }
 
@@ -95,9 +95,9 @@ static FILE *(*orig_fopen) (const char * pathname, const char * mode);
 FILE* hook_fopen(const char *pathname, const char *mode) {
   if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJHPattern isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
-      NSLog(@"[FJHooker] fopen block: %@", path);
+//      NSLog(@"[FJHooker] fopen block: %@", path);
 			errno = ENOENT;
 			return NULL;
 		}
@@ -142,12 +142,10 @@ FILE* hook_fopen(const char *pathname, const char *mode) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
 
-    // FJHooker fake__fileExistsAtPath <- NSFileManager fileExistsAtPath
     Method originalMethod = class_getInstanceMethod([NSString class], @selector(writeToFile:atomically:encoding:error:));
     IMP originalMethodImp = method_getImplementation(originalMethod);
     class_addMethod([NSString class], @selector(fake__writeToFile:atomically:encoding:error:), originalMethodImp, method_getTypeEncoding(originalMethod));
 
-    //FJHooker fileExistsAtPathHooked <-> fileExistsAtPath
     Method newMethod = class_getInstanceMethod([self class], @selector(writeToFileHooked:atomically:encoding:error:));
     IMP newMethodImp = method_getImplementation(newMethod);
     class_replaceMethod([NSString class], @selector(writeToFile:atomically:encoding:error:), newMethodImp, method_getTypeEncoding(newMethod));
@@ -156,8 +154,8 @@ FILE* hook_fopen(const char *pathname, const char *mode) {
 
 -(BOOL)writeToFileHooked:(NSString*)path atomically:(BOOL)useAuxiliaryFile encoding:(NSStringEncoding)enc error:(NSError * _Nullable *)error {
 
-  if([FJHPattern isSandBoxPathRestricted:path]) {
-    NSLog(@"[FJHooker] Blocked writeToFile(Long): %@", path);
+  if([[FJPattern sharedInstance] isSandBoxPathRestricted:path]) {
+//    NSLog(@"[FJHooker] Blocked writeToFile(Long): %@", path);
     return [self fake__writeToFile:nil atomically:useAuxiliaryFile encoding:enc error:error];
   }
   //NSLog(@"[FJHooker] Detected writeToFile(Long): %@", path);

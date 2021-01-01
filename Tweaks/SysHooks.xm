@@ -55,7 +55,7 @@
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 
-		if([FJPatternX isPathRestricted:path]) {
+		if([[FJPattern sharedInstance] isPathRestricted:path]) {
 			errno = ENOENT;
 			return -1;
 		}
@@ -67,7 +67,7 @@
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 
-		if([FJPatternX isPathRestricted:path]) {
+		if([[FJPattern sharedInstance] isPathRestricted:path]) {
 			errno = ENOENT;
 			return -1;
 		}
@@ -80,7 +80,7 @@
 	if(dirname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dirname length:strlen(dirname)];
 
-		if([FJPatternX isPathRestricted:path]) {
+		if([[FJPattern sharedInstance] isPathRestricted:path]) {
 			errno = ENOENT;
 			return -1;
 		}
@@ -91,7 +91,7 @@
 %hookf(int, access, const char *pathname, int mode) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJPatternX isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
 			errno = ENOENT;
 			return -1;
@@ -107,7 +107,7 @@ static int hook_open(const char *path, int oflag, ...) {
 	if(path) {
 		NSString *pathname = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path length:strlen(path)];
 
-		if([FJPatternX isPathRestricted:pathname]) {
+		if([[FJPattern sharedInstance] isPathRestricted:pathname]) {
 			errno = ((oflag & O_CREAT) == O_CREAT) ? EACCES : ENOENT;
 			return -1;
 		}
@@ -174,7 +174,7 @@ static int hook_open(const char *path, int oflag, ...) {
 %hookf(int, lstat, const char *pathname, struct stat *statbuf) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJPatternX isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
 			errno = ENOENT;
 			return -1;
@@ -210,7 +210,7 @@ static int hook_open(const char *path, int oflag, ...) {
 %hookf(int, stat, const char *pathname, struct stat *statbuf) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJPatternX isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
 			errno = ENOENT;
 			return -1;
@@ -239,7 +239,7 @@ static int hook_syscall(int num, ...) {
 
 	if(num == SYS_access || num == SYS_open || num == SYS_stat || num == SYS_lstat || num == SYS_stat64 || num == SYS_chdir || num == SYS_chroot) {
 		const char *path = va_arg(args, const char*);
-		if([FJPatternX isPathRestricted:[NSString stringWithUTF8String:path]]) {
+		if([[FJPattern sharedInstance] isPathRestricted:[NSString stringWithUTF8String:path]]) {
 			//NSLog(@"[FlyJB] Blocked Syscall Path = %s, num = %d", path, num);
 			errno = ENOENT;
 			return -1;
@@ -257,7 +257,7 @@ static int hook_syscall(int num, ...) {
 
 	if(num == SYS_rmdir) {
 		const char *path = va_arg(args, const char*);
-		if([FJPatternX isPathRestricted:[NSString stringWithUTF8String:path]]) {
+		if([[FJPattern sharedInstance] isPathRestricted:[NSString stringWithUTF8String:path]]) {
 			errno = ENOENT;
 			return -1;
 		}
@@ -284,7 +284,7 @@ static int hook_syscall(int num, ...) {
 %hookf(FILE *, fopen, const char *pathname, const char *mode) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJPatternX isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
 			errno = ENOENT;
 			return NULL;
@@ -470,7 +470,7 @@ DIR *(*orig_opendir)(const char *pathname);
 static DIR *hook_opendir(const char *pathname) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
-		if([FJPatternX isPathRestricted:path])
+		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
 			errno = ENOENT;
 			return NULL;
@@ -485,7 +485,7 @@ void open_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 	NSString* path2 = [NSString stringWithUTF8String:path];
 
-	if([FJPatternX isPathRestricted:path2]) {
+	if([[FJPattern sharedInstance] isPathRestricted:path2]) {
 		//NSLog(@"[FlyJB] Bypassed open path = %s", path);
 		unsigned long fileValue = 0;
 		__asm __volatile("mov x0, %0" :: "r" ("/XsF1re_Bypass!@#"));         //path

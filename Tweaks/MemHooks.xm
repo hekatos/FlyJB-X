@@ -109,7 +109,7 @@ void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 		NSString* path2 = [NSString stringWithUTF8String:path];
-		if(![path2 hasSuffix:@"/sbin/mount"] && [FJPatternX isPathRestrictedForSymlink:path2]) {
+		if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
 			*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";
 			NSLog(@"[FlyJB] Bypassed SVC #0x80 - num: %d, path: %s", syscall_num, path);
 		}
@@ -150,7 +150,7 @@ void SVC80Access_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 	//NSLog(@"[FlyJB] Detected SVC #0x80 number = %d", num_syscall);
 
 //Arxan 솔루션에서는 /sbin/mount 파일이 존재해야 우회됨.
-	if(![path2 hasSuffix:@"/sbin/mount"] && [FJPatternX isPathRestrictedForSymlink:path2]) {
+	if(![path2 hasSuffix:@"/sbin/mount"] && [[FJPattern sharedInstance] isPathRestrictedForSymlink:path2]) {
 		//Start Bypass
 		NSLog(@"[FlyJB] Bypassed SVC #0x80 - SYS_Access path = %s", path);
 		*(unsigned long *)(&reg_ctx->general.regs.x0) = (unsigned long long)"/XsF1re";

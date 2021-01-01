@@ -1,6 +1,16 @@
 #import "../Headers/FJPattern.h"
 
 @implementation FJPattern
++ (instancetype)sharedInstance {
+    static FJPattern* sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[FJPattern alloc] init];
+    });
+
+    return sharedInstance;
+}
+
 -(BOOL) isCrashAppWithSubstitutor: (NSString*) bundleID
 {
 	//롯데면세점, KB리브, 유플패스, 리브메이트, KB Pay

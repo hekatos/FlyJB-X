@@ -67,7 +67,7 @@ BOOL enableCynject = false;
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
 	NSString *bundleID = executionContext.identity.embeddedApplicationIdentifier;
-	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [FJPatternX isCrashAppWithSubstitutor:bundleID] && ![prefs_disabler[bundleID] boolValue]);
+	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [[FJPattern sharedInstance] isCrashAppWithSubstitutor:bundleID] && ![prefs_disabler[bundleID] boolValue]);
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
@@ -102,7 +102,7 @@ BOOL enableCynject = false;
 -(id)createApplicationProcessForBundleID: (NSString *)bundleID withExecutionContext: (FBProcessExecutionContext*)executionContext {
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb.plist"];
 	NSMutableDictionary *prefs_disabler = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_disabler.plist"];
-	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [FJPatternX isCrashAppWithSubstitutor:bundleID] && ![prefs_disabler[bundleID] boolValue]);
+	BOOL bypassConflictApp = ([prefs[bundleID] boolValue] && [[FJPattern sharedInstance] isCrashAppWithSubstitutor:bundleID] && ![prefs_disabler[bundleID] boolValue]);
 
 	if([bundleID isEqualToString:@"com.vivarepublica.cash"]) {
 		return %orig;
