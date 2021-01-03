@@ -201,6 +201,10 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			if([bundleID isEqualToString:@"com.korail.KorailTalk"])
 				loadAppSolidMemHooks();
 
+//광주은행
+			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
+				loadKJBankMemHooks();
+
 //따로 제작? 불명 - KB손해보험; AppDefense? - 우체국예금 스마트 뱅킹, 바이오인증공동앱, 모바일증권 나무, 디지털OTP(스마트보안카드)
 			NSArray *UnkApps = [NSArray arrayWithObjects:
 																@"com.kbinsure.kbinsureapp",
@@ -247,13 +251,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 
 			for(NSString* app in NSHCApps) {
 				if([bundleID isEqualToString:app] || NSHCExist) {
-					if(DobbyHook) {
-						loadSVC80MemHooks();
-					}
-					else {
-						//Disabled DobbyHook...
-						loadSVC80MemPatch();
-					}
+					loadSVC80MemPatch();
 					break;
 				}
 			}

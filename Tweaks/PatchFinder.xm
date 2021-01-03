@@ -207,29 +207,29 @@ int kakaoBankPatch() {
 }
 
 void loadlxShieldMemHooks() {
-#if defined __arm64__ || defined __arm64e__
+
 	const uint8_t target[] = {
 		0xFD, 0x83, 0x01, 0x91,
 		0xFF, 0x03, 0x15, 0xD1,
 		0xA8, 0x43, 0x08, 0xD1
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
-#endif
+
 }
 
 void loadlxShieldMemHooks2() {
-#if defined __arm64__ || defined __arm64e__
+
 	const uint8_t target[] = {
 		0xFD, 0x83, 0x01, 0x91,
 		0xFF, 0x43, 0x13, 0xD1,
 		0xA8, 0x43, 0x08, 0xD1
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
-#endif
+
 }
 
 void loadAhnLabMemHooks() {
-#if defined __arm64__ || defined __arm64e__
+
 	const uint8_t target[] = {
 		0x1F, 0x20, 0x03, 0xD5,
 		0x68, 0x8F, 0xFA, 0x18,
@@ -258,22 +258,22 @@ void loadAhnLabMemHooks() {
 		0x1F, 0x20, 0x03, 0xD5
 	};
 	scan_executable_memory(target4, sizeof(target4), &startHookTarget_AhnLab4);
-#endif
+
 }
 
 void loadAppSolidMemHooks() {
-#if defined __arm64__ || defined __arm64e__
+
 	const uint8_t target[] = {
 		0x4E, 0x00, 0x00, 0x37,
 		0x05, 0x00, 0x00, 0x14,
 		0x28, 0x00, 0x80, 0x52
 	};
 	scan_executable_memory(target, sizeof(target), &startHookTarget_AppSolid);
-#endif
+
 }
 
 void loadSVC80MemPatch() {
-#if defined __arm64__ || defined __arm64e__
+
 	const uint8_t target[] = {
 		0x30, 0x04, 0x80, 0xD2,	//MOV X16, #21
 		0x01, 0x10, 0x00, 0xD4	//SVC #0x80
@@ -294,5 +294,25 @@ void loadSVC80MemPatch() {
 		0x01, 0x10, 0x00, 0xD4  //SVC #0x80
 	};
 	scan_executable_memory(target3, sizeof(target3), &startPatchTarget_SYSOpen);
-#endif
+
+}
+
+void loadKJBankMemHooks() {
+
+	const uint8_t target[] = {
+		0x48, 0x91, 0x9F, 0x52,
+		0x08, 0x09, 0xA0, 0x72,
+		0x1F, 0x00, 0x08, 0x6B,
+		0xC0, 0x00, 0x00, 0x54
+	};
+	scan_executable_memory(target, sizeof(target), &startPatchTarget_KJBank);
+
+	const uint8_t target2[] = {
+		0xFD, 0x43, 0x00, 0x91,
+		0xE0, 0x1F, 0x00, 0x39,
+		0xE0, 0x1F, 0x40, 0x39,
+		0x00, 0x00, 0x00, 0x12
+	};
+	scan_executable_memory(target2, sizeof(target2), &startPatchTarget_KJBank2);
+
 }

@@ -23,6 +23,11 @@ uint8_t B8[] = {
 	0x02, 0x00, 0x00, 0x14  //B #0x8
 };
 
+uint8_t KJP[] = {
+	0x1F, 0x20, 0x03, 0xD5,	//NOP
+	0x09, 0x00, 0x00, 0x14	//B #0x24
+};
+
 uint8_t SYSOpenBlock[] = {
 	0xB0, 0x00, 0x80, 0xD2, //MOV X16, #5
 	0x00, 0x00, 0x80, 0x52  //MOV X0, #0
@@ -80,6 +85,22 @@ void startHookTarget_AhnLab4(uint8_t* match) {
 void startHookTarget_AppSolid(uint8_t* match) {
 #if defined __arm64__
 	hook_memory(match, B8, sizeof(B8));
+#endif
+}
+
+void startPatchTarget_KJBank(uint8_t* match) {
+#if defined __arm64__
+	hook_memory(match - 0x4, KJP, sizeof(KJP));
+#endif
+}
+
+void startPatchTarget_KJBank2(uint8_t* match) {
+#if defined __arm64__
+	uint8_t B10[] = {
+		0x04, 0x00, 0x00, 0x14  //B #0x10
+	};
+
+	hook_memory(match + 0x14, B10, sizeof(B10));
 #endif
 }
 
