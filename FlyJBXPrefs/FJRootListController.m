@@ -261,7 +261,7 @@ static const NSBundle *tweakBundle;
 
 
 		[specifiers addObject:({
-			NSString *year = @"2020 ~ 2021";
+			NSString *year = @"2021";
 			PSSpecifier *specifier = [[PSSpecifier alloc] init];
 			[specifier.properties setValue:@"2" forKey:@"footerAlignment"];
 			[specifier.properties setValue:[NSString stringWithFormat:LOCALIZED(@"FlyJB_LASTMSG"), vers, year] forKey:@"footerText"];
