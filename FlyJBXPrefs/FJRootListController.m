@@ -15,7 +15,7 @@
 NSMutableDictionary *prefs_FlyJB;
 NSMutableDictionary *prefs_Cr4shF1x;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.0.0";
+static NSString *vers = @"1.0.1";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -80,7 +80,7 @@ static const NSBundle *tweakBundle;
 		[specifiers addObject:({
 			PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_ACTIVATION") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
 			[specifier.properties setValue:@"0" forKey:@"footerAlignment"];
-			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있습니다." forKey:@"footerText"];
+			[specifier.properties setValue:@"DobbyHook을 사용하지 않으면 일부 앱에서 우회 기능이 작동되지 않을 수 있으나 보통 메모리 패치로 해결될 수 있습니다." forKey:@"footerText"];
 			specifier;
 		})];
 

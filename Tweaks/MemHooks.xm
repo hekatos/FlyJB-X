@@ -19,10 +19,6 @@ uint8_t RET[] = {
 	0xC0, 0x03, 0x5F, 0xD6  //RET
 };
 
-uint8_t B8[] = {
-	0x02, 0x00, 0x00, 0x14  //B #0x8
-};
-
 uint8_t KJP[] = {
 	0x1F, 0x20, 0x03, 0xD5,	//NOP
 	0x09, 0x00, 0x00, 0x14	//B #0x24
@@ -84,7 +80,7 @@ void startHookTarget_AhnLab4(uint8_t* match) {
 
 void startHookTarget_AppSolid(uint8_t* match) {
 #if defined __arm64__
-	hook_memory(match, B8, sizeof(B8));
+	hook_memory(match, RET, sizeof(RET));
 #endif
 }
 

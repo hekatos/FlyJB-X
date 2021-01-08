@@ -163,11 +163,11 @@ static int hook_open(const char *path, int oflag, ...) {
 		   || [sym isEqualToString:@"rocketbootstrap_look_up"]
 		   || [sym isEqualToString:@"rocketbootstrap_register"]
 		   || [sym isEqualToString:@"rocketbootstrap_unlock"]) {
-			//NSLog(@"[FlyJB] Bypassed dlsym handle:%p, symbol: %s", handle, symbol);
+			// NSLog(@"[FlyJB] Bypassed dlsym handle:%p, symbol: %s", handle, symbol);
 			return NULL;
 		}
 	}
-	//NSLog(@"[FlyJB] Detected dlsym handle:%p, symbol: %s", handle, symbol);
+	// NSLog(@"[FlyJB] Detected dlsym handle:%p, symbol: %s", handle, symbol);
 	return %orig;
 }
 
@@ -472,6 +472,7 @@ static DIR *hook_opendir(const char *pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
 		if([[FJPattern sharedInstance] isPathRestricted:path])
 		{
+			// NSLog(@"[FlyJB] blocked opendir: %@", path);
 			errno = ENOENT;
 			return NULL;
 		}

@@ -8,8 +8,11 @@
 	if (path == NULL) return %orig(path, mode);
 	{
 		NSString *nspath = @(path);
-		if([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
+		if(([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
 		   && [nspath hasSuffix:@".dylib"])
+			 && [nspath rangeOfString:@"AppList"].location == NSNotFound
+		 	 && [nspath rangeOfString:@"PreferenceLoader"].location == NSNotFound
+		   && [nspath rangeOfString:@"RocketBootstrap"].location == NSNotFound)
 		{
 			return NULL;
 		}
@@ -22,8 +25,11 @@
 %hookf(int, access, const char *path, int mode) {
 	if (path) {
 		NSString *nspath = [NSString stringWithUTF8String:path];
-		if([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
-		   && [nspath hasSuffix:@".plist"]) {
+		if(([nspath hasPrefix:@"/Library/MobileSubstrate/DynamicLibraries/"]
+		   && [nspath hasSuffix:@".plist"])
+		 	 && [nspath rangeOfString:@"AppList"].location == NSNotFound
+		 	 && [nspath rangeOfString:@"PreferenceLoader"].location == NSNotFound
+		   && [nspath rangeOfString:@"RocketBootstrap"].location == NSNotFound) {
 			// NSLog(@"[FlyJB] access blocked: %@", nspath);
 			errno = EACCES;
 			return -1;

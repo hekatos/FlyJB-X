@@ -13,7 +13,7 @@
 #import "../Headers/PatchFinder.h"
 #import <AppSupport/CPDistributedMessagingCenter.h>
 #import <spawn.h>
-extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSString *bundleID, int reasonID, bool report, NSString *description);
+#include <dlfcn.h>
 
 @interface SBHomeScreenViewController : UIViewController
 @end
@@ -151,21 +151,10 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 				}
 			}
 
-//락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원
-			NSArray *LiApps = [NSArray arrayWithObjects:
-																@"finance.chai.app",
-																@"com.percent.royaldice",
-																@"com.asiana.asianaapp",
-																@"kr.co.coinone.officialapp",
-																nil
-																];
-
-			for(NSString* app in LiApps) {
-				if([bundleID isEqualToString:app]) {
-					loadSysHooks4();
-					break;
-				}
-			}
+//락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원, blind...
+			Class LiappExist = objc_getClass("Liapp");
+			if(LiappExist)
+				loadSysHooks4();
 
 //스틸리언
 			Class stealienExist = objc_getClass("StockNewsdmManager");
@@ -197,9 +186,19 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			if([bundleID isEqualToString:@"com.yogiyo.yogiyoapp"])
 				loadYogiyoObjcHooks();
 
-//AppSolid - 코레일톡
-			if([bundleID isEqualToString:@"com.korail.KorailTalk"])
-				loadAppSolidMemHooks();
+//AppSolid - 코레일톡, NICE지키미, 나이스아이핀
+			NSArray *AppSolidApps = [NSArray arrayWithObjects:
+																@"com.korail.KorailTalk",
+																@"com.nice.MyCreditManager",
+																@"com.niceid.niceipin",
+																nil
+																];
+			for(NSString* app in AppSolidApps) {
+				if([bundleID isEqualToString:app]) {
+					loadAppSolidMemHooks();
+					break;
+				}
+			}
 
 //광주은행
 			if([bundleID isEqualToString:@"com.kjbank.smart.public.pbanking"])
@@ -228,17 +227,6 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 				}
 			}
 
-//NSHC ixShield 또는 변종? - 엘페이, 엘포인트, 현대카드, 온통대전, 고향사랑페이, Seezn, KT패밀리박스, 모바일 관세청, KT 콘텐츠박스, KT멤버쉽, 마이케이티, 원네비, KT PASS, KT스팸차단, KT스마트명세서, 기가지니 홈 IoT, 올레 tv play
-//NSHC Sanne? - 티머니페이, 티머니페이 비즈페이(업무택시)
-/*
-			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"] || [bundleID isEqualToString:@"com.lottecard.LotteMembers"]
-			   || [bundleID isEqualToString:@"kr.co.nmcs.ontongdaejeon"] || [bundleID isEqualToString:@"kr.co.nmcs.lpay"] || [bundleID isEqualToString:@"kr.co.show.ollehtv"]
-			   || [bundleID isEqualToString:@"com.kt.ollehfamilybox"] || [bundleID isEqualToString:@"kr.go.kcs.mobile.pubservice"] || [bundleID isEqualToString:@"com.kt.contentsbox"]
-			   || [bundleID isEqualToString:@"kr.co.show.ollehclub2"] || [bundleID isEqualToString:@"kr.co.show.cs.full"] || [bundleID isEqualToString:@"kr.co.show.shownavi"]
-			   || [bundleID isEqualToString:@"com.kt.ios.dongbaekpay"] || [bundleID isEqualToString:@"com.kt.ktauth"] || [bundleID isEqualToString:@"kr.co.show.showspamfilter"]
-			 	 || [bundleID isEqualToString:@"co.kr.show.ollehsmartspecs"] || [bundleID isEqualToString:@"kr.co.show.cert"] || [bundleID isEqualToString:@"kr.co.show.ollehmywallet"]
-			 	 || [bundleID isEqualToString:@"co.kr.olleh.ollehgigageniehomeiphone"] || [bundleID isEqualToString:@"co.kr.show.ollehtvguideiphone"])
-*/
 			NSArray *NSHCApps = [NSArray arrayWithObjects:
 																@"com.lotte.mybee.lpay",
 																@"com.lottecard.LotteMembers",
@@ -260,8 +248,8 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			if([bundleID isEqualToString:@"com.kakaogames.gdtskr"])
 				loadlxShieldMemHooks();
 
-//NSHC lxShield v2 - 현대카드
-			if([bundleID isEqualToString:@"com.hyundaicard.hcappcard"])
+//NSHC lxShield v2 - 현대카드, 달빛조각사
+			if([bundleID isEqualToString:@"com.hyundaicard.hcappcard"]  || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks2();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구

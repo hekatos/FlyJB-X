@@ -1,0 +1,4 @@
+#!/bin/bash
+if [[ -f "/usr/bin/inject" ]]; then
+    inject "/usr/lib/FJHooker.dylib" &> /dev/null
+fi

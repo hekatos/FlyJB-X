@@ -28,15 +28,7 @@
 }
 %end
 
-//DexProtector? 화해 - opendir 후킹이 substitute와 충돌 :(
-%hook ProbeCallbacks
-+(void)notifyWith: (id)arg1 {
-	arg1 = [arg1 stringByReplacingOccurrencesOfString:@":1" withString:@":0"];
-	%orig;
-}
-%end
-
-//KSFileUtil - opendir 후킹이 substitute와 충돌 :(
+//KSFileUtil - opendir 후킹하면 substitute와 충돌 :(
 %hook KSFileUtil
 +(int)checkJailBreak {
 	return 1;
@@ -140,6 +132,18 @@
 %end
 
 //NSHC
+%hook SN_SelfChecker
+-(BOOL)startToCheckError:(id*)arg1 {
+	return NO;
+}
+%end
+
+%hook iX_SelfChecker
+-(BOOL)startToCheckError:(id*)arg1 {
+	return NO;
+}
+%end
+
 %hook __ns_a
 -(id)__ns_a1 {
 	return @"0";

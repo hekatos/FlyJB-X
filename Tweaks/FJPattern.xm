@@ -20,6 +20,11 @@
 	                                @"com.lguplus.auth.ios",
 	                                @"com.kbcard.kat.liivmate",
 	                                @"com.kbcard.cxh.appcard",
+                                  //Substitute v2.0+ Crashed Apps
+                                  @"com.kbankwith.smartbank",
+                                  @"kr.kbsec.iplustar",
+                                  @"com.Kiwoom.HeroSMobile",
+                                  @"com.teamblind.blind",
 	                                nil
 	                               ];
 	for (NSString *app in ConflictApps) {
@@ -431,6 +436,15 @@
                              @"/var/stash/usr/libexec",
                              @"/var/stash/usr/share",
                              @"/var/tmp/cydia.log",
+                             @"/bin/Clutch",
+                             @"/usr/bin/Clutch",
+                             @"/etc/clutch.conf",
+                             @"/etc/applist-cache.clutch",
+                             @"/private/var/mobile/Library/Cydia",
+                             @"/private/var/stash/usr/libexec/cydia",
+                             @"/private/var/mobile/Library/Logs/Cydia",
+                             @"/private/var/root/Library/Caches/Clutch",
+                             @"/private/var/stash/Applications/Cydia.app/Cydia",
                              nil
                             ];
 }
@@ -455,7 +469,7 @@
 
 	for (NSString *jbFile in jailbreakFiles) {
 		if ([path isEqualToString:jbFile]) {
-			//NSLog(@"[FlyJB] BYPASSED file = %@", path);
+			// NSLog(@"[FlyJB] BYPASSED file = %@", path);
 			return YES;
 		}
 	}
