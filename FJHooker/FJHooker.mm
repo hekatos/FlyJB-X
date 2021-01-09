@@ -246,8 +246,8 @@
     loadLibraryHooks();
     
     // ==== END HOOK ====
-    closeCydiaSubstrate();
-    closeDobby();
+//    closeCydiaSubstrate();
+//    closeDobby();
     
 }
 @end
