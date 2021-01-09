@@ -21,7 +21,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 //iOS 11 ~ 13
 %hook _SBApplicationLaunchAlertInfo
  -(NSString *)bundleID {
- 	if (isSubstitute && syscall(SYS_access, DisableLocation, F_OK) != -1) {
+ 	if (isSubstitute && syscall(SYS_access, DisableLocation, F_OK) == 0) {
  		//NSLog(@"[test] _SBApplicationLaunchAlertInfo bundleID = %@", orig);
  		//NSLog(@"[test] Found DisableLocation.");
  		int rmResult = remove(DisableLocation);
@@ -49,7 +49,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue] || bypassConflictApp) {
-					if(isSubstitute) {
+					if(isSubstitute && bypassConflictApp) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -58,7 +58,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
 					if(bypassConflictApp)
-						[environmentM setObject:@"/usr/lib/FlyJBX.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
+						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];
 					executionContext.environment = [environmentM copy];
@@ -81,7 +81,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 	if([prefs[@"enabled"] boolValue]) {
 		//NSLog(@"[test] FBProcessManager createApplicationProcessForBundleID, bundleIDx = %@", bundleIDx);
 		if ([prefs_disabler[bundleID] boolValue] || bypassConflictApp) {
-					if(isSubstitute) {
+					if(isSubstitute && bypassConflictApp) {
 						FILE* fp = fopen(DisableLocation, "w");
 						if (fp == NULL) {
 							//NSLog(@"[test] Failed to write DisableLocation.");
@@ -90,7 +90,7 @@ const char *DisableLocation = "/var/tmp/.substitute_disable_loader";
 
 					NSMutableDictionary* environmentM = [executionContext.environment mutableCopy];
 					if(bypassConflictApp)
-						[environmentM setObject:@"/usr/lib/FlyJBX.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
+						[environmentM setObject:@"/usr/lib/FJHooker.dylib" forKey:@"DYLD_INSERT_LIBRARIES"];
 					[environmentM setObject:@(1) forKey:@"_MSSafeMode"];
 					[environmentM setObject:@(1) forKey:@"_SafeMode"];
 					executionContext.environment = [environmentM copy];

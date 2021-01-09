@@ -5,3 +5,4 @@ void loadSysHooks2();
 void loadSysHooks3();
 void loadSysHooks4();
 void loadOpendirSysHooks();
+void loadDlsymSysHooks();

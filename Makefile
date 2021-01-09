@@ -2,7 +2,7 @@ GO_EASY_ON_ME = 1
 FINALPACKAGE=1
 DEBUG=0
 
-THEOS_DEVICE_IP = 172.30.1.25 -p 22
+THEOS_DEVICE_IP = 172.30.1.3 -p 22
 
 ARCHS := arm64
 TARGET := iphone:clang:13.1:7.1
@@ -19,9 +19,9 @@ $(TWEAK_NAME)_CFLAGS = -fobjc-arc
 include $(THEOS_MAKE_PATH)/tweak.mk
 before-package::
 	mkdir -p $(THEOS_STAGING_DIR)/usr/lib/
-	cp $(THEOS_STAGING_DIR)/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib $(THEOS_STAGING_DIR)/usr/lib/FlyJBX.dylib
+	ldid -S -M -Ksigncert.p12 $(THEOS_STAGING_DIR)/usr/lib/FJHooker.dylib
 
 after-install::
 	install.exec "killall -9 SpringBoard"
-SUBPROJECTS += FlyJBXPrefs
+SUBPROJECTS += FlyJBXPrefs FJHooker
 include $(THEOS_MAKE_PATH)/aggregate.mk

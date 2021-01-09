@@ -21,10 +21,6 @@
 @interface NSDistributedNotificationCenter : NSNotificationCenter
 @end
 
-@interface LSApplicationProxy
-+(LSApplicationProxy *)applicationProxyForIdentifier:(NSString *)bundleId;
--(NSString *)bundleExecutable;
-@end
 
 %group NoFile
 %hook SpringBoard
@@ -109,7 +105,7 @@
 	%init(TossAppProtection);
 	loadDisableInjector();
 
-	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
+	// NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
 	// if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
 	// 	loadOptimizeHooks();
 	// }
@@ -333,7 +329,7 @@
 					loadSysHooks3();
 			}
 
-
+			loadDlsymSysHooks();
 			loadOpendirSysHooks();
 
 			loadObjCHooks();

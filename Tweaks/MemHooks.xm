@@ -122,7 +122,6 @@ void startPatchTarget_SYSOpen(uint8_t* match) {
 void SVC80_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
 #if defined __arm64__
 	int syscall_num = (int)(uint64_t)reg_ctx->general.regs.x16;
-
 	if(syscall_num == SYS_open || syscall_num == SYS_access || syscall_num == SYS_lstat64) {
 		const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
 		NSString* path2 = [NSString stringWithUTF8String:path];

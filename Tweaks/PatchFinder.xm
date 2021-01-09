@@ -11,11 +11,7 @@
 #include <sys/mman.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
-
-@interface LSApplicationProxy
-+(LSApplicationProxy *)applicationProxyForIdentifier:(NSString *)bundleId;
--(NSURL *)bundleURL;
-@end
+#include <mach-o/dyld.h>
 
 void (*orig_kabank)(void);
 void kabank_ret(void) {}
@@ -177,8 +173,19 @@ static int print_symbols(void* map, size_t filesize) {
 
 int kakaoBankPatch() {
 	/* Get an open file descriptor for mmap */
-  const char* kabankLibPath = [[[[[LSApplicationProxy applicationProxyForIdentifier:@"com.kakaobank.channel"] bundleURL] path] stringByAppendingPathComponent:@"Frameworks/kakaobank_library.framework/kakaobank_library"] UTF8String];
+  NSString* NSkabankLibPath;
+	uint32_t count = _dyld_image_count();
+	for(uint32_t i = 0; i < count; i++)
+	{
+		const char *dyld = _dyld_get_image_name(i);
+		NSString *fwName = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dyld length:strlen(dyld)];
+		if([fwName hasSuffix:@"kakaobank_library"]) {
+			NSkabankLibPath = fwName;
+			break;
+		}
+	}
 
+	const char* kabankLibPath = [NSkabankLibPath UTF8String];
 	int fd = open(kabankLibPath, O_RDONLY);
 	if(fd == -1) {
 		perror(kabankLibPath);

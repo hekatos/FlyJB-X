@@ -146,31 +146,6 @@ static int hook_open(const char *path, int oflag, ...) {
 	return %orig;
 }
 
-%hookf(void *, dlsym, void *handle, const char *symbol) {
-	if(symbol) {
-		NSString *sym = [NSString stringWithUTF8String:symbol];
-		if([sym isEqualToString:@"MSGetImageByName"]
-		   || [sym isEqualToString:@"MSHookMemory"]
-		   || [sym isEqualToString:@"MSFindSymbol"]
-		   || [sym isEqualToString:@"MSHookFunction"]
-		   || [sym isEqualToString:@"MSHookMessageEx"]
-		   || [sym isEqualToString:@"MSHookClassPair"]
-		   || [sym isEqualToString:@"_Z13flyjb_patternP8NSString"]
-		   || [sym isEqualToString:@"_Z9hms_falsev"]
-		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportcreateremote"]
-		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportexposelocal"]
-		   || [sym isEqualToString:@"rocketbootstrap_distributedmessagingcenter_apply"]
-		   || [sym isEqualToString:@"rocketbootstrap_look_up"]
-		   || [sym isEqualToString:@"rocketbootstrap_register"]
-		   || [sym isEqualToString:@"rocketbootstrap_unlock"]) {
-			// NSLog(@"[FlyJB] Bypassed dlsym handle:%p, symbol: %s", handle, symbol);
-			return NULL;
-		}
-	}
-	// NSLog(@"[FlyJB] Detected dlsym handle:%p, symbol: %s", handle, symbol);
-	return %orig;
-}
-
 %hookf(int, lstat, const char *pathname, struct stat *statbuf) {
 	if(pathname) {
 		NSString *path = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:pathname length:strlen(pathname)];
@@ -501,30 +476,39 @@ static DIR *hook_opendir(const char *pathname) {
 }
 %end
 
-void open_handler(RegisterContext *reg_ctx, const HookEntryInfo *info) {
-#if defined __arm64__
-	const char* path = (const char*)(uint64_t)(reg_ctx->general.regs.x0);
-	NSString* path2 = [NSString stringWithUTF8String:path];
-
-	if([[FJPattern sharedInstance] isPathRestricted:path2]) {
-		//NSLog(@"[FlyJB] Bypassed open path = %s", path);
-		unsigned long fileValue = 0;
-		__asm __volatile("mov x0, %0" :: "r" ("/XsF1re_Bypass!@#"));         //path
-		__asm __volatile("mov %0, x0" : "=r" (fileValue));
-		*(unsigned long *)(&reg_ctx->general.regs.x0) = fileValue;
+%group DlsymSysHooks
+%hookf(void *, dlsym, void *handle, const char *symbol) {
+	if(symbol) {
+		NSString *sym = [NSString stringWithUTF8String:symbol];
+		if([sym isEqualToString:@"MSGetImageByName"]
+		   || [sym isEqualToString:@"MSHookMemory"]
+		   || [sym isEqualToString:@"MSFindSymbol"]
+		   || [sym isEqualToString:@"MSHookFunction"]
+		   || [sym isEqualToString:@"MSHookMessageEx"]
+		   || [sym isEqualToString:@"MSHookClassPair"]
+		   || [sym isEqualToString:@"_Z13flyjb_patternP8NSString"]
+		   || [sym isEqualToString:@"_Z9hms_falsev"]
+		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportcreateremote"]
+		   || [sym isEqualToString:@"rocketbootstrap_cfmessageportexposelocal"]
+		   || [sym isEqualToString:@"rocketbootstrap_distributedmessagingcenter_apply"]
+		   || [sym isEqualToString:@"rocketbootstrap_look_up"]
+		   || [sym isEqualToString:@"rocketbootstrap_register"]
+		   || [sym isEqualToString:@"rocketbootstrap_unlock"]) {
+			// NSLog(@"[FlyJB] Bypassed dlsym handle:%p, symbol: %s", handle, symbol);
+			return NULL;
+		}
 	}
-	else {
-		//NSLog(@"[FlyJB] Detected open path = %s", path);
-	}
-
-#endif
+	// NSLog(@"[FlyJB] Detected dlsym handle:%p, symbol: %s", handle, symbol);
+	return %orig;
 }
+%end
 
 void loadSysHooks() {
 	%init(SysHooks);
 	//Substrate crash when hook open on iOS 14... WTF?
 	//Use dobbyhook instead :)
-	DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "open"), (DBICallTy)open_handler);
+	// DobbyInstrument(dlsym((void *)RTLD_DEFAULT, "open"), (DBICallTy)open_handler);
+	DobbyHook((void*)open, (void*)hook_open, (void**)&orig_open);
 }
 
 void loadSysHooks2() {
@@ -545,4 +529,8 @@ void loadSysHooks4() {
 void loadOpendirSysHooks() {
 	%init(OpendirSysHooks);
 	rebind_symbols((struct rebinding[1]){{"opendir", (void *)hook_opendir, (void **)&orig_opendir}}, 1);
+}
+
+void loadDlsymSysHooks() {
+	%init(DlsymSysHooks);
 }
