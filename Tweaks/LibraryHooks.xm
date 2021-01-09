@@ -250,10 +250,21 @@
 	return %orig;
 }
 %end
+
+//xigncode - 좀비고
+int (*orig_xigncode)();
+int hook_xigncode() {
+	return 0;
+}
+
 %end
 
 void loadLibraryHooks() {
 	%init(LibraryHooks,
 	      SSGPAY_DetectionController = NSClassFromString(@"SSGPAY.DetectionController"),
 	      samsungCardMyHome = NSClassFromString(@" "));
+}
+
+void loadXignCodeHooks() {
+	MSHookFunction(MSFindSymbol(NULL, "__ZN16JailBreakChecker2DoEP12ISDispatcher"), (void*)hook_xigncode, (void**)&orig_xigncode);
 }

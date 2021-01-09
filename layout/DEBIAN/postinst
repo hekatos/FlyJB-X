@@ -21,12 +21,15 @@ echo "[FlyJB X]다른 트윅보다 먼저 로드될 수 있도록 이름을 변�
 mv "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.dylib" "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.dylib" &> /dev/null
 mv "/Library/MobileSubstrate/DynamicLibraries/FlyJBX.plist" "/Library/MobileSubstrate/DynamicLibraries/ FlyJBX.plist" &> /dev/null
 
-echo "[FlyJB X] FJHooker 인젝트 중..."
+echo "[FlyJB X] FlyJBX, Dobby, Substitute 인젝트 중..."
 if [[ -f "/usr/bin/inject" ]]; then
-    inject "/usr/lib/FJHooker.dylib" &> /dev/null
-    echo "[FlyJB X] FJHooker 인젝트 완료"
+    inject "/usr/lib/FlyJBX.dylib" &> /dev/null
+    inject "/usr/lib/FJDobby" &> /dev/null
+    inject "/usr/lib/libsubstrate.dylib" &> /dev/null
+    inject "/usr/lib/libsubstitute.dylib" &> /dev/null
+    echo "[FlyJB X] 인젝트 완료"
 else
-    echo "[FlyJB X] FJHooker 인젝트할 필요 없습니다."
+    echo "[FlyJB X] 인젝트할 필요 없습니다."
 fi
 
 echo "[FlyJB X]설치 완료...! FlyJB X 를 설치해주셔서 감사합니다. 즐거운 탈옥되세요~"

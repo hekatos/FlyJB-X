@@ -15,7 +15,7 @@
 NSMutableDictionary *prefs_FlyJB;
 NSMutableDictionary *prefs_Cr4shF1x;
 NSMutableDictionary *prefs_Disabler;
-static NSString *vers = @"1.0.1";
+static NSString *vers = @"1.0.2";
 
 static const NSBundle *tweakBundle;
 #define LOCALIZED(str) [tweakBundle localizedStringForKey:str value:@"" table:nil]
@@ -133,6 +133,12 @@ static const NSBundle *tweakBundle;
 			[specifier.properties setValue:LOCALIZED(@"FlyJB_OPTIMIZE_DESC") forKey:@"footerText"];
 			specifier;
 		})];
+		// [specifiers addObject:({
+		// 		PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:@"FlyJB X 인젝트하기" target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+		// 		[specifier setIdentifier:@"ShowSourceCode"];
+		// 		specifier->action = @selector(injectFlyJBX);
+		// 		specifier;
+		// })];
 		[specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_OPTIMIZELIST") target:nil set:nil get:nil detail:[FJCr4shF1xListController class] cell:PSLinkListCell edit:nil]];
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
 			[specifiers addObject:({
@@ -479,6 +485,17 @@ static const NSBundle *tweakBundle;
 	return [prefs_FlyJB [[specifier propertyForKey:@"displayIdentifier"]] isEqual:@1] ? @1 : @0;
 }
 
+-(void)injectFlyJBX {
+	pid_t pid;
+	const char* args[] = {"/usr/bin/inject", "/usr/lib/FlyJBX.dylib", NULL};
+	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args, NULL);
+	const char* args2[] = {"/usr/bin/inject", "/usr/lib/FJDobby", NULL};
+	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args2, NULL);
+	const char* args3[] = {"/usr/bin/inject", "/usr/lib/libsubstrate.dylib", NULL};
+	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args3, NULL);
+	const char* args4[] = {"/usr/bin/inject", "/usr/lib/libsubstitute.dylib", NULL};
+	posix_spawn(&pid, "inject", NULL, NULL, (char* const*)args4, NULL);
+}
 
 -(void)openWebsite:(PSSpecifier *)specifier {
 	NSString *value = specifier.identifier;

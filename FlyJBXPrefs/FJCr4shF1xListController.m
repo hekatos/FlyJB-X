@@ -30,19 +30,6 @@ static NSInteger DictionaryTextComparator(id a, id b, void *context) {
 			[specifiers addObject:specifier];
 		}
 
-    [specifiers addObject:[PSSpecifier preferenceSpecifierNamed:LOCALIZED(@"FlyJB_SYSTEMAPPS") target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil]];
-    applications = [applicationList applicationsFilteredUsingPredicate:[NSPredicate predicateWithFormat:@"isSystemApplication = TRUE"]];
-    displayIdentifiers = [[applications allKeys] mutableCopy];
-    [displayIdentifiers sortUsingFunction:DictionaryTextComparator context:(__bridge void *)applications];
-    for (NSString *displayIdentifier in displayIdentifiers)
-    {
-      PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:applications[displayIdentifier] target:self set:@selector(setSwitch:forSpecifier:) get:@selector(getSwitch:) detail:nil cell:PSSwitchCell edit:nil];
-      [specifier.properties setValue:displayIdentifier forKey:@"displayIdentifier"];
-      UIImage *icon = [applicationList iconOfSize:ALApplicationIconSizeSmall forDisplayIdentifier:displayIdentifier];
-      if (icon) [specifier setProperty:icon forKey:@"iconImage"];
-      [specifiers addObject:specifier];
-    }
-
 		_specifiers = [specifiers copy];
 	}
 

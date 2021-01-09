@@ -8,7 +8,7 @@
 #import "../Headers/SysHooks.h"
 #import "../Headers/NoSafeMode.h"
 #import "../Headers/MemHooks.h"
-#import "../Headers/OptimizeHooks.h"
+// #import "../Headers/OptimizeHooks.h"
 #import "../Headers/CheckHooks.h"
 #import "../Headers/PatchFinder.h"
 #import <AppSupport/CPDistributedMessagingCenter.h>
@@ -110,9 +110,9 @@
 	loadDisableInjector();
 
 	NSMutableDictionary *prefs_crashfix = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/kr.xsf1re.flyjb_crashfix.plist"];
-	if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
-		loadOptimizeHooks();
-	}
+	// if(prefs_crashfix && [prefs[@"enabled"] boolValue] && [prefs_crashfix[bundleID] boolValue]) {
+	// 	loadOptimizeHooks();
+	// }
 
 	if(![bundleID hasPrefix:@"com.apple"] && prefs && [prefs[@"enabled"] boolValue]) {
 		if(([prefs[bundleID] boolValue])
@@ -237,8 +237,9 @@
 																];
 			Class NSHCExist = objc_getClass("__ns_d");
 
+//블랙리스트: 빗썸
 			for(NSString* app in NSHCApps) {
-				if([bundleID isEqualToString:app] || NSHCExist) {
+				if([bundleID isEqualToString:app] || (NSHCExist && ![bundleID isEqualToString:@"com.btckorea.bithumb"])) {
 					loadSVC80MemPatch();
 					break;
 				}
@@ -303,6 +304,10 @@
 					break;
 				}
 			}
+
+//XignCode - 좀비고
+		if([bundleID isEqualToString:@"net.kernys.aooni"])
+			loadXignCodeHooks();
 
 //하나카드, NEW하나은행, Arxan 앱은 우회가 좀 까다로운 듯? 하면 안되는 시스템 후킹이 있음
 		 NSMutableArray *blacklistApps = [NSMutableArray arrayWithObjects:

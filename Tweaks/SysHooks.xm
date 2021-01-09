@@ -320,7 +320,8 @@ static int hook_syscall(int num, ...) {
 		    [lower rangeOfString:@"libmryipc"].location != NSNotFound ||
 		    [lower rangeOfString:@"libactivator"].location != NSNotFound ||
 		    [lower rangeOfString:@"alderis"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcloaky"].location != NSNotFound) {
+		    [lower rangeOfString:@"libcloaky"].location != NSNotFound ||
+				[lower rangeOfString:@"flyjb"].location != NSNotFound) {
 			//NSLog(@"[FlyJB] Bypassed SysHooks2 _dyld_get_image_name : %s", ret);
 			return "/dyld.bypass";
 		}
@@ -387,7 +388,8 @@ void syncDyldArray() {
 		    [lower rangeOfString:@"libmryipc"].location != NSNotFound ||
 		    [lower rangeOfString:@"libactivator"].location != NSNotFound ||
 		    [lower rangeOfString:@"alderis"].location != NSNotFound ||
-		    [lower rangeOfString:@"libcloaky"].location != NSNotFound) {
+		    [lower rangeOfString:@"libcloaky"].location != NSNotFound ||
+				[lower rangeOfString:@"flyjb"].location != NSNotFound) {
 			//NSLog(@"[FlyJB] BYPASSED dyld = %@", name);
 			continue;
 		}
@@ -399,6 +401,24 @@ void syncDyldArray() {
 }
 
 %group SysHooks4
+static char* (*orig_strstr)(const char* s1, const char* s2);
+static char* hook_strstr(const char* s1, const char* s2) {
+  if(strcmp(s2, "/Library/MobileSubstrate/") == 0
+      || strcmp(s2, "/Flex.dylib") == 0
+      || strcmp(s2, "/introspy.dylib") == 0
+      || strcmp(s2, "/MobileSubstrate.dylib") == 0
+      || strcmp(s2, "/CydiaSubstrate.framework") == 0
+      || strcmp(s2, "/.file") == 0
+      || strcmp(s2, "!@#") == 0
+      || strcmp(s2, "frida")== 0
+      || strcmp(s2, "Frida") == 0
+      || strcmp(s2, "ubstrate") == 0) {
+				NSLog(@"[FlyJB] strstr s1: %s", s1);
+      return NULL;
+		}
+  return orig_strstr(s1, s2);
+}
+
 %hookf(uint32_t, _dyld_image_count) {
 	return dyldCount;
 }
@@ -519,6 +539,7 @@ void loadSysHooks3() {
 void loadSysHooks4() {
 	syncDyldArray();
 	%init(SysHooks4);
+	// MSHookFunction((void *)dlsym(RTLD_DEFAULT, "strstr"), (void *)hook_strstr, (void **)&orig_strstr);
 }
 
 void loadOpendirSysHooks() {

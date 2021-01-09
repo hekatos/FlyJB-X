@@ -29,8 +29,7 @@
 	<key>FlyJB_DISABLERLIST</key>
 	<string>모든 트윅 비활성화</string>
 	<key>FlyJB_DISABLER_DESC</key>
-	<string>특정 앱에 대한 모든 트윅 적용이 해제됩니다.
-Substitute 또는 Cydia Substrate와 앱이 충돌하는 경우만 사용하세요.</string>
+	<string>특정 앱에 대한 모든 트윅 적용이 해제됩니다.</string>
 	<key>FlyJB_ENABLE</key>
 	<string>사용</string>
     <key>FlyJB_ENABLE_DOBBY</key>
@@ -71,7 +70,7 @@ v%@ © FlyJB X %@</string>
 	<key>FlyJB_OPTIMIZELIST</key>
 	<string>최적화 리스트</string>
 	<key>FlyJB_OPTIMIZE_DESC</key>
-	<string>앱과 트윅 사이에 충돌하는 현상을 해결하며 앱 성능이 최적화될 수 있습니다.</string>
+	<string>앱 성능이 최적화될 수 있으며 Cydia Substrate/Substitute와 충돌하는 현상이 해결될 수 있습니다.</string>
 	<key>FlyJB_PATCHDATA_DESC</key>
 	<string>일부 앱들은 메모리 패치가 필요하므로 앱버전을 확인해야 합니다.</string>
 	<key>FlyJB_RESET</key>

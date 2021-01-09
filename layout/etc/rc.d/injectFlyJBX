@@ -1,0 +1,7 @@
+#!/bin/bash
+if [[ -f "/usr/bin/inject" ]]; then
+    inject "/usr/lib/FlyJBX.dylib" &> /dev/null
+    inject "/usr/lib/FJDobby" &> /dev/null
+    inject "/usr/lib/libsubstrate.dylib" &> /dev/null
+    inject "/usr/lib/libsubstitute.dylib" &> /dev/null
+fi
