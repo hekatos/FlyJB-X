@@ -159,6 +159,12 @@
 }
 %end
 
+%hook iXDetectedPattern
+-(NSString *)pattern_type_id {
+  return @"0000";
+}
+%end
+
 %hook __ns_d
 -(NSString*)detectionObject {
 	NSString* orig = %orig;
