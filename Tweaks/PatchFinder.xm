@@ -235,6 +235,18 @@ void loadlxShieldMemHooks2() {
 
 }
 
+
+void loadlxShieldMemHooks3() {
+
+	const uint8_t target[] = {
+		0xFD, 0x83, 0x01, 0x91,
+		0xFF, 0x03, 0x16, 0xD1,
+		0xA8, 0x83, 0x08, 0xD1
+	};
+	scan_executable_memory(target, sizeof(target), &startHookTarget_lxShield);
+
+}
+
 void loadAhnLabMemHooks() {
 
 	const uint8_t target[] = {

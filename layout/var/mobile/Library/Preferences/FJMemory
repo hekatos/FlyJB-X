@@ -1,4 +1,26 @@
 {
+  "com.truefriend.smartnewi": {
+    "1.9.5": {
+      "addr": [
+        "0x1003C4B40",
+        "0x1003C4B40"
+      ],
+      "instr": [
+        "0x000080D2",
+        "0xC0035FD6"
+      ],
+    },
+  },
+  "com.truefriend.ministock": {
+    "1.0.11": {
+      "addr": [
+        "0x1005DF4AC"
+      ],
+      "instr": [
+        "0x200080D2"
+      ],
+    },
+  },
   "com.gsretail.gscvs": {
     "4.0.8": {
       "addr": [
@@ -118,5 +140,5 @@
       ],
     },
   },
-  "version": "2021.01.08"
+  "version": "2021.01.11"
 }

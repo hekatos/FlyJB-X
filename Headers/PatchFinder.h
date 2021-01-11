@@ -5,6 +5,7 @@
 int kakaoBankPatch();
 void loadlxShieldMemHooks();
 void loadlxShieldMemHooks2();
+void loadlxShieldMemHooks3();
 void loadAhnLabMemHooks();
 void loadAppSolidMemHooks();
 void loadSVC80MemPatch();

@@ -9,7 +9,6 @@ void loadSVC80MemHooks();
 void loadSVC80AccessMemHooks();
 void loadOpendirMemHooks();
 void startHookTarget_lxShield(uint8_t* match);
-void startHookTarget_lxShield2(uint8_t* match);
 void startHookTarget_AhnLab(uint8_t* match);
 void startHookTarget_AhnLab2(uint8_t* match);
 void startHookTarget_AhnLab3(uint8_t* match);

@@ -403,7 +403,9 @@ static char* hook_strstr(const char* s1, const char* s2) {
 %hookf(struct mach_header *, _dyld_get_image_header, uint32_t image_index) {
 	return dyldHeaders[image_index];
 }
+%end
 
+%group loadSysHooksForLiApp
 %hookf(int, connect, int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
 	NSString *appPath = [[[[NSBundle mainBundle] bundleURL] absoluteString] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
 	const char *LiAppPath = [[appPath stringByAppendingString:@"LIAPP.ini"] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -524,6 +526,10 @@ void loadSysHooks4() {
 	syncDyldArray();
 	%init(SysHooks4);
 	// MSHookFunction((void *)dlsym(RTLD_DEFAULT, "strstr"), (void *)hook_strstr, (void **)&orig_strstr);
+}
+
+void loadSysHooksForLiApp() {
+	%init(loadSysHooksForLiApp);
 }
 
 void loadOpendirSysHooks() {

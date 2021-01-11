@@ -150,7 +150,7 @@
 //락인컴퍼니 솔루션 LiApp - 차이, 랜덤다이스, 아시아나항공, 코인원, blind...
 			Class LiappExist = objc_getClass("Liapp");
 			if(LiappExist)
-				loadSysHooks4();
+				loadSysHooksForLiApp();
 
 //스틸리언
 			Class stealienExist = objc_getClass("StockNewsdmManager");
@@ -224,7 +224,7 @@
 			}
 
 			NSArray *NSHCApps = [NSArray arrayWithObjects:
-																@"com.lotte.mybee.lpay",
+																//@"com.lotte.mybee.lpay",
 																@"com.lottecard.LotteMembers",
 																@"kr.co.nmcs.lpay",
 																@"com.tmoney.tmpay",
@@ -248,6 +248,10 @@
 //NSHC lxShield v2 - 현대카드, 달빛조각사
 			if([bundleID isEqualToString:@"com.hyundaicard.hcappcard"]  || [bundleID isEqualToString:@"com.kakaogames.moonlight"])
 				loadlxShieldMemHooks2();
+
+//NSHC lxShield v3 - LPay
+			if([bundleID isEqualToString:@"com.lotte.mybee.lpay"])
+				loadlxShieldMemHooks3();
 
 //RaonSecure TouchEn mVaccine - 비플제로페이, 하나은행(+Arxan?), 하나알리미(+Arxan?, 메모리 패치 있음), 미래에셋생명 모바일창구
 			NSArray *mVaccineApps = [NSArray arrayWithObjects:
