@@ -5,12 +5,12 @@ DEBUG=0
 THEOS_DEVICE_IP = 127.0.0.1 -p 2222
 
 ARCHS := arm64
-TARGET := iphone:clang:13.1:7.1
+TARGET := iphone:clang:14.5:9.3
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = FlyJBX
-$(TWEAK_NAME)_FRAMEWORKS = MobileCoreServices Dobby
+$(TWEAK_NAME)_FRAMEWORKS = MobileCoreServices DobbyX
 $(TWEAK_NAME)_LIBRARIES = MobileGestalt rocketbootstrap
 $(TWEAK_NAME)_PRIVATE_FRAMEWORKS = AppSupport
 $(TWEAK_NAME)_FILES = fishhook/fishhook.c Tweaks/FJPattern.xm Tweaks/Tweak.xm Tweaks/LibraryHooks.xm Tweaks/ObjCHooks.xm Tweaks/DisableInjector.xm Tweaks/SysHooks.xm Tweaks/NoSafeMode.xm Tweaks/MemHooks.xm Tweaks/CheckHooks.xm Tweaks/PatchFinder.xm Tweaks/AeonLucid.xm
