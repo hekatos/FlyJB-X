@@ -30,7 +30,11 @@ jobs:
       - 
         name: Build Dobby
         run: |
+          clang -v
+          clang++ -v
           (
+            CC="/usr/bin/clang"
+            CXX="/usr/bin/clang++"
             cd DobbyX
             mkdir build
             cd build
