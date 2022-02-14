@@ -9,8 +9,25 @@ jobs:
         name: Setup Theos
         uses: Randomblock1/theos-action@v1
       - 
+        name: Setup Procursus
+        run: |
+          curl -LO https://cameronkatri.com/zstd
+          curl -L https://apt.procurs.us/bootstrap_darwin-amd64.tar.zst -o bootstrap.tar.zst
+          chmod +x zstd
+          ./zstd -d bootstrap.tar.zst
+          sudo tar -xpkf bootstrap.tar -C /
+          printf 'export PATH="/opt/procursus/bin:/opt/procursus/sbin:/opt/procursus/games:$PATH"\nexport CPATH="$CPATH:/opt/procursus/include"\nexport LIBRARY_PATH="$LIBRARY_PATH:/opt/procursus/lib"\n' | sudo tee -a /etc/zprofile /etc/profile
+          export PATH="/opt/procursus/bin:/opt/procursus/sbin:/opt/procursus/games:$PATH"
+          export CPATH="$CPATH:/opt/procursus/include"
+          export LIBRARY_PATH="$LIBRARY_PATH:/opt/procursus/lib"
+          sudo apt -y update
+          sudo apt -y full-upgrade
+          
+          sudo apt-get install -y cmake
+      - 
         name: Symlink iOS 14.5 SDK
         run: |
+          source /etc/profile 
           ln -s /Users/runner/work/FlyJB-X/FlyJB-X/theos/sdks/iPhoneOS14.5.sdk /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk
           defaults write /Applications/Xcode-13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Info.plist MinimumSDKVersion 14.5
       - 
@@ -23,6 +40,7 @@ jobs:
         name: Build Dobby
         run: |
           (
+            source /etc/profile
             cd DobbyX
             mkdir build
             cd build
