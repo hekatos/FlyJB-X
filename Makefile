@@ -10,7 +10,8 @@ TARGET := iphone:clang:14.5:9.3
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = FlyJBX
-$(TWEAK_NAME)_FRAMEWORKS = MobileCoreServices DobbyX
+$(TWEAK_NAME)_FRAMEWORKS = MobileCoreServices
+$(TWEAK_NAME)_EXTRA_FRAMEWORKS = DobbyX
 $(TWEAK_NAME)_LIBRARIES = MobileGestalt rocketbootstrap
 $(TWEAK_NAME)_PRIVATE_FRAMEWORKS = AppSupport
 $(TWEAK_NAME)_FILES = fishhook/fishhook.c Tweaks/FJPattern.xm Tweaks/Tweak.xm Tweaks/LibraryHooks.xm Tweaks/ObjCHooks.xm Tweaks/DisableInjector.xm Tweaks/SysHooks.xm Tweaks/NoSafeMode.xm Tweaks/MemHooks.xm Tweaks/CheckHooks.xm Tweaks/PatchFinder.xm Tweaks/AeonLucid.xm
