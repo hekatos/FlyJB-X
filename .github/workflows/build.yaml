@@ -30,7 +30,7 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode_13.2.1.app
                   
           ln -s /Users/runner/work/FlyJB-X/FlyJB-X/theos/sdks/iPhoneOS14.5.sdk /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk
-          defaults write /Applications/Xcode-13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Info.plist MinimumSDKVersion 14.5
+          defaults write /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Info.plist MinimumSDKVersion 14.5
       - 
         name: Checkout Dobby
         uses: actions/checkout@v2
