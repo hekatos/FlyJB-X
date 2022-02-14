@@ -10,6 +10,7 @@ jobs:
         uses: Randomblock1/theos-action@v1
       - 
         name: Setup Procursus
+        continue-on-error: true
         run: |
           curl -LO https://cameronkatri.com/zstd
           curl -L https://apt.procurs.us/bootstrap_darwin-amd64.tar.zst -o bootstrap.tar.zst
