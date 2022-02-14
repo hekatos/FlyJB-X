@@ -12,11 +12,13 @@ jobs:
         name: Setup Procursus
         continue-on-error: true
         run: |
+          brew install gnu-tar
+          
           curl -LO https://cameronkatri.com/zstd
           curl -L https://apt.procurs.us/bootstrap_darwin-amd64.tar.zst -o bootstrap.tar.zst
           chmod +x zstd
           ./zstd -d bootstrap.tar.zst
-          sudo tar -xpkf bootstrap.tar -C /
+          sudo gtar -xpkf bootstrap.tar -C /
           printf 'export PATH="/opt/procursus/bin:/opt/procursus/sbin:/opt/procursus/games:$PATH"\nexport CPATH="$CPATH:/opt/procursus/include"\nexport LIBRARY_PATH="$LIBRARY_PATH:/opt/procursus/lib"\n' | sudo tee -a /etc/zprofile /etc/profile
           export PATH="/opt/procursus/bin:/opt/procursus/sbin:/opt/procursus/games:$PATH"
           export CPATH="$CPATH:/opt/procursus/include"
