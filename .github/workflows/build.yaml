@@ -40,27 +40,26 @@ jobs:
       - 
         name: Build Dobby
         run: |
-          clang -v
-          clang++ -v
           (
             cd DobbyX
             mkdir build
             cd build
             
-            cmake -D CMAKE_C_COMPILER="/Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" \
-              -D CMAKE_CXX_COMPILER="/Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++" \
+            cmake -D CMAKE_C_COMPILER="/opt/procursus/bin/clang" \
+              -D CMAKE_CXX_COMPILER="/opt/procursus/bin/clang++" \
               -D CMAKE_OSX_SYSROOT="/Users/runner/work/FlyJB-X/FlyJB-X/theos/sdks/iPhoneOS14.5.sdk" \
               -G Xcode .. -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=9.3
             xcodebuild ARCHS="armv7 arm64 arm64e" ONLY_ACTIVE_ARCH=NO -scheme DobbyX -configuration Release -sdk iphoneos14.5 archive -archivePath build.xcarchive
             cp -r build.xcarchive/Products/@rpath/DobbyX.framework $THEOS/lib/
           )
-          rm -rf DobbyX
       - 
         name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          path: FlyJB-X
       -
         name: Build tweak
-        run: gmake all
+        run: gmake -C ./FlyJB-X all
         
 
 
