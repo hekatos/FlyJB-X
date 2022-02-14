@@ -33,13 +33,13 @@ jobs:
           clang -v
           clang++ -v
           (
-            CC="/usr/bin/clang"
-            CXX="/usr/bin/clang++"
             cd DobbyX
             mkdir build
             cd build
             
-            cmake -G Xcode .. -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=9.3
+            cmake -D CMAKE_C_COMPILER "/Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" \
+              -D CMAKE_CXX_COMPILER "/Applications/Xcode_13.2.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++" \
+              -G Xcode .. -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=9.3
             xcodebuild ARCHS="armv7 arm64 arm64e" ONLY_ACTIVE_ARCH=NO -scheme DobbyX -configuration Release -sdk iphoneos14.5 archive -archivePath build.xcarchive
             cp -r build.xcarchive/Products/@rpath/DobbyX.framework $THEOS/lib/
           )
