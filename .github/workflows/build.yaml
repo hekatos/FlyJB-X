@@ -11,13 +11,14 @@ jobs:
       - 
         name: Setup Procursus
         uses: beerpiss/procursus-action@v1
-      - 
-        name: Install build dependencies
-        run: sudo apt-get install -y clang
+        with:
+          packages: clang cmake build-essential
         
       - 
         name: Symlink iOS 14.5 SDK
         run: |
+          sudo xcode-select --switch /Applications/Xcode_13.2.1.app
+                  
           ln -s /Users/runner/work/FlyJB-X/FlyJB-X/theos/sdks/iPhoneOS14.5.sdk /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk
           defaults write /Applications/Xcode-13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Info.plist MinimumSDKVersion 14.5
       - 
