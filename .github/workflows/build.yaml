@@ -20,7 +20,7 @@ jobs:
       -
         name: Setup Theos
         run: |
-          echo "THEOS=$GITHUB_WORKSPACE/${{ inputs.theos-dir }}" >> $GITHUB_ENV
+          echo "THEOS=$GITHUB_WORKSPACE/theos" >> $GITHUB_ENV
           git clone https://github.com/theos/theos ${{ github.workspace }}/theos --recursive
           
           curl -sLO https://github.com/theos/sdks/archive/master.zip
