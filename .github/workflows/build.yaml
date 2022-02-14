@@ -1,1 +1,42 @@
+name: Build FlyJB X
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      -
+        name: Setup Theos
+        uses: Randomblock1/theos-action@v1
+      - 
+        name: Symlink iOS 14.5 SDK
+        run: |
+          ln -s /Users/runner/work/FlyJB-X/FlyJB-X/theos/sdks/iPhoneOS14.5.sdk /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk
+          defaults write /Applications/Xcode-13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Info.plist MinimumSDKVersion 14.5
+      - 
+        name: Checkout Dobby
+        uses: actions/checkout@v2
+        with:
+          path: DobbyX
+      - 
+        name: Build Dobby
+        run: |
+          (
+            cd DobbyX
+            mkdir build
+            cd build
+            
+            cmake -G Xcode .. -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=9.3
+            xcodebuild ARCHS="armv7 arm64 arm64e" ONLY_ACTIVE_ARCH=NO -scheme DobbyX -configuration Release -sdk iphoneos14.5 archive -archivePath build.xcarchive
+            cp -r build.xcarchive/Products/@rpath/DobbyX.framework $THEOS/lib/
+          )
+          rm -rf DobbyX
+      - 
+        name: Checkout repository
+        uses: actions/checkout@v2
+      -
+        name: Build tweak
+        run: gmake all
+        
+
 
