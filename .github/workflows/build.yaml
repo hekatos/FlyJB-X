@@ -12,25 +12,24 @@ jobs:
           repositories: |
             jmpews/Dobby
             hekatos/FlyJB-X
-      -
-        name: Setup Theos
-        uses: Randomblock1/theos-action@v1
-      -
-        name: Setup SDKs
-        run: |
-            curl -sLO https://github.com/theos/sdks/archive/master.zip
-            TMP=$(mktemp -d)
-            7z x master.zip -o$TMP
-            mv $TMP/*-master/*.sdk $THEOS/sdks
-            rm -r master.zip $TMP
-            
-            ls -lha $THEOS/sdks
       - 
         name: Setup Procursus
         uses: beerpiss/procursus-action@v1.1
         with:
-          packages: clang cmake
-        
+          packages: clang cmake ldid make
+      -
+        name: Setup Theos
+        run: |
+          echo "THEOS=$GITHUB_WORKSPACE/${{ inputs.theos-dir }}" >> $GITHUB_ENV
+          git clone https://github.com/theos/theos ${{ github.workspace }}/theos --recursive
+          
+          curl -sLO https://github.com/theos/sdks/archive/master.zip
+          TMP=$(mktemp -d)
+          7z x master.zip -o$TMP
+          mv $TMP/*-master/*.sdk $THEOS/sdks
+          rm -r master.zip $TMP
+
+          ls -lha $THEOS/sdks
       - 
         name: Prep for iOS 14.5 SDK
         run: |
