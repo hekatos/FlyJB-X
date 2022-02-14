@@ -10,7 +10,7 @@ jobs:
         uses: Randomblock1/theos-action@v1
       - 
         name: Setup Procursus
-        uses: beerpiss/procursus-action@v1
+        uses: beerpiss/procursus-action@v1.1
         with:
           packages: clang cmake build-essential
         
