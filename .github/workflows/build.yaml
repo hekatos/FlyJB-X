@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: 'Package'
-          path: ../hekatos/FlyJB-X/packages/*.deb
+          path: /Users/runner/work/FlyJB-X/hekatos/FlyJB-X/packages/*.deb
         
 
 
