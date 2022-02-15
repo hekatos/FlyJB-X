@@ -43,7 +43,13 @@ jobs:
           )
       -
         name: Build tweak
-        run: gmake -C ../hekatos/FlyJB-X all
+        run: gmake -C ../hekatos/FlyJB-X package FINALPACKAGE=1
+      -
+        name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'Package'
+          path: ../hekatos/FlyJB-X/packages/*.deb
         
 
 
